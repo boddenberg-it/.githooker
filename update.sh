@@ -1,14 +1,15 @@
 #!/bin/bash
 
 # unlink orphaned symlinks in .git/hooks
-for file in $(ls .git/hooks | grep -v ".sample"); do
+for file in .git/hooks/*; do
+    [ grep -v ".sample" $file ] || break
     if [ "$(ls ./githooks | grep -c "$file")" -lt 1 ]; then
         unlink "$file" || rm "$file"
     fi
 done
 
 # create/fix missing/broken sym-links
-for file in $(ls ./git-hooks/); do
+for file in ./git-hooks/*; do
     file_without_extension="$(cut -d '.' -f1 "$file")"
 
     if [ -f ".git/hooks/$file_without_extension" ]; then
