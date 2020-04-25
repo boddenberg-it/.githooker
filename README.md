@@ -67,14 +67,15 @@ git clone --recurse-submodules $YOUR_PROJECT
 Then run `./githooks/helper.sh` with desired argument(s).
 
 ```bash
-list		# list all hooks and its state 	(<span style="color:green">enabled</span>, <span style="color:yellow">disabled</span>, <span style="color:red">orphaned</span>)
+list		# list all hooks and its state  (color code explanation below)
 enable $H1 $H2 	# enable(s) passed hook(s) 	(One or several can be passed)
 disable --all	# disables all available hooks 	(One or several hooks can also be passed)
 
 interactive	# lists each hook with status and ask whether to enable/disable status (y/N).
 ```
+colors used to represent status of hook are <span style="color:green">enabled</span>, <span style="color:yellow">disabled</span>, <span style="color:red">orphaned</span>.
 
-##### examples
+#### examples
 
 ```bash
 ./.githooks/helper.sh enable --all 		    # enables all available git hooks
@@ -87,7 +88,7 @@ interactive	# lists each hook with status and ask whether to enable/disable stat
 _**Note**: enable and disable have short-hand aliases as well (`e` and `d`)._
 
 
-##### usage screenshots:
+#### usage screenshots:
 
 tbc...
 
@@ -95,5 +96,5 @@ tbc...
 
 tbc ...
 
-##### Feebdack [githooks@boddenberg.it](mailto:githooks@boddenberg.it?subject=[.githooks])
+#### Feebdack [githooks@boddenberg.it](mailto:githooks@boddenberg.it?subject=[.githooks])
 
