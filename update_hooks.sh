@@ -1,18 +1,18 @@
 #!/bin/bash
 
 # unlink orphaned symlinks in .git/hooks
-for file in $(ls .git/hooks/ | grep -v ".sample"); do
-    if [ $(ls ./githooks | grep $file | wc -l) -lt 1 ]; then
-        unlink $file || rm $file
+for file in $(ls .git/hooks | grep -v ".sample"); do
+    if [ "$(ls ./githooks | grep -c "$file")" -lt 1 ]; then
+        unlink "$file" || rm "$file"
     fi
 done
 
 # create/fix missing/broken sym-links
 for file in $(ls ./git-hooks/); do
-    file_without_extension="$(cut -d '.' -f1 $file)"
+    file_without_extension="$(cut -d '.' -f1 "$file")"
 
     if [ -f ".git/hooks/$file_without_extension" ]; then
-        if [ "$(ls -l .git/hooks/$file_without_extension | tail -n +2 | grep -oE '[^ ]+$')" = "$file" ]; then
+        if [ "$(ls -l ".git/hooks/$file_without_extension" | tail -n +2 | grep -oE '[^ ]+$')" = "$file" ]; then
             continue # everything's fine
         else
             # there is a file, but it's not a sym-link or it points to wrong file - fixing it.
