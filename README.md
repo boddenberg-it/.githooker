@@ -41,10 +41,10 @@ source .githooks/generic_hooks.sh
 run_command_once "*.java,*.kt" "echo \"list of expressions matches staged files\""
 
 run_command_for_each_file "*.sh" "echo \"found staged script: \$changed_file\""
+#Note: \$changed_file needs to be escaped to substitute it while actual processing._
 ```
-After changing example to your project needs simply commit changes and push them.
 
-_**Note**: `\$changed_file` needs to be escaped in passed command to substitute it with actual file while processing._
+After changing example to your project needs simply commit changes and push them - done!
 
 
 ### 2nd) local setup
@@ -62,7 +62,8 @@ Alternatively, cloning submodules directly when initially cloning super project 
 git clone --recurse-submodules $YOUR_PROJECT
 ```
 
-Run `./githooks/helper.sh interactive` and configure hooks. For more information about all commands run `./.githooks/helper.sh help`. 
+Run `./githooks/helper.sh interactive` to configure hooks. 
+For more information about all commands run `./.githooks/helper.sh help`. 
 
 #### usage screenshots:
 
