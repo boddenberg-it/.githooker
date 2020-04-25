@@ -1,5 +1,4 @@
 #!/bin/bash
-# This generic hook script shall be sourced by scripts in ./githooks/
 
 function generic_hook {
 	for changed_file in $(git diff HEAD  --name-only); do
@@ -11,7 +10,7 @@ function generic_hook {
 }
 
 function run_command_for_each_file {
-	echo "${1//\,/\\|}" "$2 \$changed_file"
+	generic_hook "${1//\,/\\|}" "$2 \$changed_file"
 }
 
 function run_command_once {
