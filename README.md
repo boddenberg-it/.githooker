@@ -1,2 +1,3 @@
-# .git-hooks
-just a test
+# .githooks
+
+tbc...
