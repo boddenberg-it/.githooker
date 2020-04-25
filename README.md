@@ -24,7 +24,7 @@ _**Note**: `.githooks` takes care of any git-hook script in `githooks/` regardle
 
 ### How to setup?
 
-##### initial setup 
+### 1st) initial setup 
 
 ```bash
 git submodule add https://github.com/boddenberg-it/.githooks
@@ -42,14 +42,12 @@ run_command_once "*.java,*.kt" "echo \"list of expressions matches staged files\
 
 run_command_for_each_file "*.sh" "echo \"found staged script: \$changed_file\""
 ```
+After changing example to your project needs simply commit changes and push them.
 
 _**Note**: `\$changed_file` needs to be escaped in passed command to substitute it with actual file while processing._
 
-After changing example to your project needs simply commit changes and push them.
 
-
-
-##### local setup
+### 2nd) local setup
 
 After pulling latest changes initialize the [git submodule](https://git-scm.com/docs/git-submodule) via:
 
@@ -58,35 +56,13 @@ git submodule init
 git submodule update
 ```
 
-Alternatively, cloning submodules directly  when initially cloning super project works via:
+Alternatively, cloning submodules directly when initially cloning super project works via:
 
 ```bash
 git clone --recurse-submodules $YOUR_PROJECT
 ```
 
-Then run `./githooks/helper.sh` with desired argument(s).
-
-```bash
-list		# list all hooks and its state  (color code explanation below)
-enable $H1 $H2 	# enable(s) passed hook(s) 	(One or several can be passed)
-disable --all	# disables all available hooks 	(One or several hooks can also be passed)
-
-interactive	# lists each hook with status and ask whether to enable/disable status (y/N).
-```
-colors used to represent status of hook are <span style="color:green">enabled</span>, <span style="color:yellow">disabled</span>, <span style="color:red">orphaned</span>.
-
-#### examples
-
-```bash
-./.githooks/helper.sh enable --all 		    # enables all available git hooks
-./.githooks/helper.sh disable pre-commit pre-push   # disables both stated git hooks
-
-./.githooks/helper.sh l		# short-hand for list 
-./.githooks/helper.sh i		# short-hand for interactive
-```
-
-_**Note**: enable and disable have short-hand aliases as well (`e` and `d`)._
-
+Run `./githooks/helper.sh interactive` and configure hooks. For more information about all commands run `./.githooks/helper.sh help`. 
 
 #### usage screenshots:
 
