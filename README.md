@@ -1,6 +1,6 @@
 # .githooks - _yet another git hook helper_
 
-tl;dr: 
+### tl;dr: 
 
 - common git-hook tasks as declarative configuration inside your repo
 - simple & individual handling of git-hooks across team
@@ -8,7 +8,7 @@ tl;dr:
 
 ### Why?
 
-**.githooks** shall avoid duplicating code across multiple repositories used for _git-hook-ish_ tasks like evlauating list of staged files in a commit and fire actions accordingly. Setting up a [git-hook](https://git-scm.com/docs/githooks) is turned into a more declarative configuration. It also recudes maintenance of git-hooks across a team working on repository by tracking mentioned **git-hook declarations** in git itself. Moreover, the `.githooks/helper.sh` provides simple management of project's git-hooks in an interactive CLI-manner.
+**.githooks** shall avoid duplicating code across multiple repositories used for _git-hook-ish_ tasks like evlauating list of staged files in a commit and fire actions accordingly. Setting up a [git-hook](https://git-scm.com/docs/githooks) is turned into a more declarative configuration. It also recudes maintenance of git-hooks across a team working on repository by tracking git-hooks in repo. Moreover, the `.githooks/helper.sh` provides simple management of project's git-hooks in an interactive CLI-manner.
 
 Last but not least, **git** and **bash** are the only dependencies necessary for this [git-hook](https://git-scm.com/docs/githooks) helper in the hope to provide highly versatile use.
 
@@ -16,7 +16,7 @@ _***Note***: This shall not stop anyone from using the general idea with python,
 
 ### How odes it work?
 
-**.githooks** itself is added to desired repsoitory as a [git submodule](https://git-scm.com/docs/git-submodule). Then a `githooks/` directory is manually created, which holds arbritrary [git-hook](https://git-scm.com/docs/githooks) scripts and/or **git-hooks declarations**. Such declarations need to source `.githooks/generic_hooks.sh` to use the _declarative git-hooks_ approach. The following image shall visually explain the just stated:
+**.githooks** itself is added as a [git submodule](https://git-scm.com/docs/git-submodule) to desired repsoitory. Then a `githooks/` directory is manually created, which holds arbritrary [git-hook](https://git-scm.com/docs/githooks) scripts and/or **git-hooks declarations**. Such declarations need to source `.githooks/generic_hooks.sh` to use the _declarative git-hooks_ approach. The following image shall visually explain the just stated:
 
 ![alt text](https://boddenberg.it/misc/github/boddenberg-it/githooks/visualization.png "visualization of how .githooks works")
 
@@ -74,9 +74,8 @@ For more information about all commands run `./.githooks/helper.sh help`.
 
 tbc...
 
-### test setup of .githooks
-
-tbc ...
-
 #### Feebdack [githooks@boddenberg.it](mailto:githooks@boddenberg.it?subject=[.githooks])
 
+# test setup of .githooks
+
+tbc ...
