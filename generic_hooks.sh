@@ -1,9 +1,9 @@
 #!/bin/bash
 
 function generic_hook {
-	for changed_file in $(git diff HEAD  --name-only); do
+	for changed_file in $(git diff HEAD --name-only); do
 		if grep -- "$1" "$changed_file" > /dev/null; then
-        		$2
+			$2
 		fi
 	done
 }
