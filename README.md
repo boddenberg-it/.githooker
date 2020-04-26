@@ -1,14 +1,18 @@
 # .githooks - _yet another git hook helper_
 
+tl;dr: 
+
+- common git-hook tasks as declarative configuration inside your repo
+- simple & individual handling of git-hooks across team
+
+
 ### Why?
 
-**.githooks** shall avoid duplicating code across multiple repositories used for _git-hook-ish_ tasks. It eases their setup by turning [git-hooks](https://git-scm.com/docs/githooks) into a more declarative configuration. It also recudes maintenance of [git-hooks](https://git-scm.com/docs/githooks) across a team working on a repository by tracking mentioned **git-hook declarations** in git itself.
+**.githooks** shall avoid duplicating code across multiple repositories used for _git-hook-ish_ tasks like evlauating list of staged files in a commit and fire actions accordingly. Setting up a [git-hook](https://git-scm.com/docs/githooks) is turned into a more declarative configuration. It also recudes maintenance of git-hooks across a team working on repository by tracking mentioned **git-hook declarations** in git itself. Moreover, the `.githooks/helper.sh` provides simple management of project's git-hooks in an interactive CLI-manner.
 
 Last but not least, **git** and **bash** are the only dependencies necessary for this [git-hook](https://git-scm.com/docs/githooks) helper in the hope to provide highly versatile use.
 
 _***Note***: This shall not stop anyone from using the general idea with python, groovy or the like instead of bash_.
-
-
 
 ### How odes it work?
 
@@ -41,7 +45,7 @@ source .githooks/generic_hooks.sh
 run_command_once "*.java,*.kt" "echo \"list of expressions matches staged files\""
 
 run_command_for_each_file "*.sh" "echo \"found staged script: \$changed_file\""
-#Note: \$changed_file needs to be escaped to substitute it while actual processing._
+# Note: \$changed_file needs to be escaped to substitute it while actual processing.
 ```
 
 After changing example to your project needs simply commit changes and push them - done!
@@ -62,14 +66,15 @@ Alternatively, cloning submodules directly when initially cloning super project 
 git clone --recurse-submodules $YOUR_PROJECT
 ```
 
-Run `./githooks/helper.sh interactive` to configure hooks. 
+Run `./githooks/helper.sh interactive` to configure hooks.
+
 For more information about all commands run `./.githooks/helper.sh help`. 
 
 #### usage screenshots:
 
 tbc...
 
-### test setup
+### test setup of .githooks
 
 tbc ...
 
