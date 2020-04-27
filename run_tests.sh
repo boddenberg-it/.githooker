@@ -284,13 +284,13 @@ else
 	failure "run_command_once - multiple regex passed"
 fi
 
+# restoring old hooks and deleting backup
+cp "$hook_backup"/* "$BASE/.git/hooks/"
 # clean up
 rm "$BASE/foo.check" "$BASE/bar.check" "$BASE/githooks/pre-commit"
 rm -rf "$BASE"/tests/*
+ensure_clean_test_setup
 
 git checkout "$current_branch" > /dev/null 2>&1
-# restoring old hooks and deleting backup
-ensure_clean_test_setup
-cp "$hook_backup"/* "$BASE/.git/hooks/"
 echo
 exit $final_test_result
