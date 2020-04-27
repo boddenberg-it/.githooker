@@ -67,7 +67,7 @@ cp "$BASE"/.git/hooks/* "$hook_backup"
 echo -e "\n${b}######${u} starting .githooker test suites ${b}######${u}"
 final_test_result=0
 
-echo -e "\n${b}TESTs OF: .githooker/generic_hooks.sh$u"
+echo -e "\n${b}TESTs OF: .githooker/do$u"
 
 # LIST TESTS
 ensure_clean_test_setup "list"
@@ -77,7 +77,7 @@ create_hook pre-commit 0
 create_hook pre-push 1
 create_hook pre-rebase 2
 # command under test
-list > log 2>&1
+list > "$log"
 # evaluations
 if grep -q "31mpre-commit" "$log"; then
 	success "list test - finds$r oprhaned$d hook"
@@ -248,13 +248,13 @@ cat << EOF > "$BASE/githooks/pre-commit"
 #!/bin/bash
 source "$BASE.githooker/do"
 
-run_command_for_each_file "*.check" "echo \"list of expressions matches staged files\" > tests/\$changed_file\"
+run_command_for_each_file "*.check" "touch tests/\$changed_file\"
 
-run_command_for_each_file "*.does_multiple_command_regex_work,*.check" "echo \"list of expressions matches staged files\" > tests/\${changed_file}-multiple_regex"
+run_command_for_each_file "*.does_multiple_command_regex_work,*.check" "touch tests/\${changed_file}-multiple_regex"
 
-run_command_once "*.check" "echo \"list of expressions matches staged files\" > tests/run_command_once"
+run_command_once "*.check" "touch tests/run_command_once"
 
-run_command_once "*.nope,*.check" "echo \"list of expressions matches staged files\" > tests/run_command_once_multiple_regex; exit 1"
+run_command_once "*.nope,*.check" "touch tests/run_command_once_multiple_regex; exit 1"
 
 EOF
 # actual commands
