@@ -7,7 +7,7 @@ if [ "$(basename "$BASE")" != ".githooker" ]; then
 	cd "$BASE/.githooker"
 	BASE="$(git rev-parse --show-toplevel)"
 	
-	if [ "$(basename "$BASE")" != "githooks" ]; then
+	if [ "$(basename "$BASE")" != ".githooker" ]; then
 		echo -e "\n[WARNING] calling .githooker tests on a different repo ($(basename "$BASE"))... aborting!\n"
 		exit 1
 	fi
