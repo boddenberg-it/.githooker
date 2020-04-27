@@ -3,8 +3,14 @@ BASE="$(git rev-parse --show-toplevel)"
 
 # check whether tests are invoked in .githooks and not in repo which is using it as a subomdule!
 if [ "$(basename "$BASE")" != "githooks" ]; then
-	echo -e "\n[WARNING] calling .githooks tests on a different repo ($(basename "$BASE"))... aborting!\n"
-	exit 1
+	# two checks to allow calling .githooker from super project
+	cd "$BASE/.githooker"
+	BASE="$(git rev-parse --show-toplevel)"
+	
+	if [ "$(basename "$BASE")" != "githooks" ]; then
+		echo -e "\n[WARNING] calling .githooks tests on a different repo ($(basename "$BASE"))... aborting!\n"
+		exit 1
+	fi
 fi
 
 # sourcing script under test
