@@ -179,7 +179,7 @@ else
 fi
 
 # INTERACTIVE TESTS (check if expect is available)
-if expect -v > /dev/null 2>&1; then
+if [ expect -v > /dev/null 2>&1 ]; then
 	echo -e "\n${b}[INFO]$u No expect installation found skipping interactive tests..."
 else
 	echo -e "\n${b}INTERACTIVE TESTS$u"
