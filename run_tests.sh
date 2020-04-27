@@ -67,6 +67,52 @@ cp "$BASE"/.git/hooks/* "$hook_backup"
 echo -e "\n${b}######${u} starting .githooker test suites ${b}######${u}"
 final_test_result=0
 
+echo -e "\n${b}TESTS OF: .githooker/generic_hooks.sh$u"
+# setup
+current_branch="$(git branch --show-current)"
+git branch -d testing_branch > /dev/null 2>&1 || true
+git branch testing_branch > /dev/null 2>&1 || true
+git checkout test > /dev/null 2>&1
+touch "$BASE/foo.check" "$BASE/bar.check" "$BASE/foo.bar"
+cat << EOF > "$BASE/githooks/pre-commit"
+#!/bin/bash
+source "./generic_hooks.sh"
+
+run_command_for_each_file "*.check" "touch"
+
+run_command_for_each_file "*.foo,*.bar" "touch"
+
+run_command_once "*.check" "touch run_command_once"
+
+run_command_once "*.nope,*.check" "touch run_command_once_multiple_regex ; exit 1"
+
+EOF
+# actual commands
+enable pre-commit > /dev/null 2>&1
+git add foo.check bar.check foobar.one > /dev/null 2>&1
+git commit -m "Test .githooker/do: if u read this: write male to githooker@boddenberg-it.de" > /dev/null 2>&1
+# evaluations
+if [ -f "$BASE/foo.check" ] && [ -f "$BASE/bar.check" ]; then
+	success "run_command_for_each_file - one regex passed"
+else
+	failure "run_command_for_each_file - one regex passed"
+fi
+if [ -f "$BASE/foo.bar" ]; then
+	success "run_command_for_each_file - multiple regex passed"
+else
+	failure "run_command_for_each_file - mutliple regex passed"
+fi
+if [ -f "$BASE/run_command_once" ]; then
+	success "run_command_once - one regex passed"
+else
+	failure "run_command_once - one regex passed"
+fi
+if [ -f "$BASE/run_command_once_multiple_regex" ]; then
+	success "run_command_once - mutliple regex passed"
+else
+	failure "run_command_once - multiple regex passed"
+fi
+
 echo -e "\n${b}TESTS OF: .githooker/do$u"
 # LIST TESTS
 ensure_clean_test_setup "list"
@@ -238,56 +284,10 @@ else
 	fi
 fi
 
-echo -e "\n${b}TESTS OF: .githooker/generic_hooks.sh$u"
-# setup
-current_branch="$(git branch --show-current)"
-git branch -d testing_branch > /dev/null 2>&1 || true
-git branch testing_branch > /dev/null 2>&1 || true
-git checkout test > /dev/null 2>&1
-touch "$BASE/foo.check" "$BASE/bar.check" "$BASE/foo.bar"
-cat << EOF > "$BASE/githooks/pre-commit"
-#!/bin/bash
-source "./generic_hooks.sh"
-
-run_command_for_each_file "*.check" "touch"
-
-run_command_for_each_file "*.foo,*.bar" "touch"
-
-run_command_once "*.check" "touch run_command_once"
-
-run_command_once "*.nope,*.check" "touch run_command_once_multiple_regex ; exit 1"
-
-EOF
-# actual commands
-enable pre-commit > /dev/null 2>&1
-git add foo.check bar.check foobar.one > /dev/null 2>&1
-git commit -m "Test .githooker/do: if u read this: write male to githooker@boddenberg-it.de" > /dev/null 2>&1
-# evaluations
-if [ -f "$BASE/foo.check" ] && [ -f "$BASE/bar.check" ]; then
-	success "run_command_for_each_file - one regex passed"
-else
-	failure "run_command_for_each_file - one regex passed"
-fi
-if [ -f "$BASE/foo.bar" ]; then
-	success "run_command_for_each_file - multiple regex passed"
-else
-	failure "run_command_for_each_file - mutliple regex passed"
-fi
-if [ -f "$BASE/run_command_once" ]; then
-	success "run_command_once - one regex passed"
-else
-	failure "run_command_once - one regex passed"
-fi
-if [ -f "$BASE/run_command_once_multiple_regex" ]; then
-	success "run_command_once - mutliple regex passed"
-else
-	failure "run_command_once - multiple regex passed"
-fi
-
 # restoring old hooks and deleting backup
 cp "$hook_backup"/* "$BASE/.git/hooks/"
 # clean up
-rm "$BASE/foo.check" "$BASE/bar.check" "$BASE/githooks/pre-commit"
+rm "$BASE/foo.check" "$BASE/bar.check" "$BASE/githooks/pre-commit" > /dev/null 2>&1
 rm -rf "$BASE"/tests/*
 ensure_clean_test_setup
 
