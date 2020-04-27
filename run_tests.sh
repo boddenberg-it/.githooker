@@ -128,7 +128,7 @@ create_hook pre-commit 1
 create_hook pre-push 1
 create_hook pre-rebase 1
 # command under test
-enable --alls > /dev/null 2>&1
+enable --all > /dev/null 2>&1
 # evaluation
 if [ -f "$BASE/.git/hooks/pre-commit" ] && [ -f "$BASE/.git/hooks/pre-push" ] && [ -f "$BASE/.git/hooks/pre-rebase" ]; then
 	success "enable - all hooks (--all)"
@@ -183,7 +183,7 @@ create_hook pre-commit 2
 create_hook pre-push 2
 create_hook pre-rebase 2
 # command under test
-disable --alls > /dev/null 2>&1
+disable --all > /dev/null 2>&1
 # evaluation
 if [ -f "$BASE/.git/hooks/pre-commit" ] || [ -f "$BASE/.git/hooks/pre-push" ] || [ -f "$BASE/.git/hooks/pre-rebase" ]; then
 	failure "disable - all hooks (--all)"
