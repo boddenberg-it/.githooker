@@ -136,7 +136,6 @@ else
 	failure "enable --all hooks"
 fi
 
-
 # DISABLE TESTS
 echo -e "\n${b}DISABLE TESTS$u"
 # setup
@@ -180,7 +179,6 @@ else
 fi
 
 # INTERACTIVE TESTS (check if expect is available)
-
 if expect -v > /dev/null 2>&1; then
 	echo -e "\n${b}[INFO]$u No expect installation found skipping interactive tests..."
 else
@@ -206,26 +204,25 @@ else
 	end="$(date +%s)"
 	# evaluations:
 	if [ $((end-start)) = 5 ]; then
-		failure "interactive test - answer yes to all"
+		"${r}${b}[TIMEOUT]${d} ${u}interactive test - answer yes to all"
+	fi
+	# check if orphaned pre-commit is deleted
+	if [ -f "$BASE/.git/hooks/pre-commit" ]; then
+		failure "interactive test - delete orphaned hook"
 	else
-		# check if orphaned pre-commit is deleted
-		if [ -f "$BASE/.git/hooks/pre-commit" ]; then
-			failure "interactive test - delete orphaned hook"
-		else
-			success "interactive test - delete orphaned hook"
-		fi
-		# check it pre-push is disabled
-		if [ -f "$BASE/.git/hooks/pre-push" ]; then
-			failure "interactive test - disable enabled hook"
-		else
-			success "interactive test - disable enabled hook"
-		fi
-		# check if pre-rebase is enabled 
-		if [ ! -f "$BASE/.git/hooks/pre-rebases" ]; then
-			failure "interactive test - enable disabled hook"
-		else
-			success "interactive test - enable disabled hook"
-		fi
+		success "interactive test - delete orphaned hook"
+	fi
+	# check it pre-push is disabled
+	if [ -f "$BASE/.git/hooks/pre-push" ]; then
+		failure "interactive test - disable enabled hook"
+	else
+		success "interactive test - disable enabled hook"
+	fi
+	# check if pre-rebase is enabled
+	if [ ! -f "$BASE/.git/hooks/pre-rebases" ]; then
+		failure "interactive test - enable disabled hook"
+	else
+		success "interactive test - enable disabled hook"
 	fi
 fi
 
