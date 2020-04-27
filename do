@@ -22,14 +22,15 @@ function generic_interactive {
 }
 
 function generic_toggle {
-    if [ $# -eq 2 ] && [ "$2" = "--all" ]; then
+    if [ "$2" = "--all" ]; then
         for hook in githooks/*; do
-                $1 "$hook" "$(cut -d '.' -f1 "$hook")"
+                echo "$1 "$hook" "$(cut -d '.' -f1 "$hook" 2> /dev/null)""
+                $1 "$hook" "$(cut -d '.' -f1 "$hook" 2> /dev/null)"
         done
     else
         command="$1"; shift
         for hook in $@; do
-            $command "$hook" "$(cut -d '.' -f1 "$hook")"
+            $command "$hook" "$(cut -d '.' -f1 "$hook" 2> /dev/null)"
         done
     fi
 }
@@ -54,10 +55,10 @@ function helper_enable {
 function helper_disable {
     hook="$1"
     if [[ $1 = *"."* ]]; then
-        hook="$(echo $1 | cut -d "." -f1)"
+        hook="$(basename $1 | cut -d "." -f1)"
     fi
     rm "$BASE/.git/hooks/$hook" 2> /dev/null
-    echo -e "\t$2 hook ${y}disabled${d}"
+    echo -e "\t$b$1$u hook ${y}disabled${d}"
 }
 
 ## actual commands/task which can be invoked
@@ -145,6 +146,9 @@ function l {
     list
 }
 
-# evaluating passed args 
+# log every invocation in a log (test runs and actual hook are not included.
+# Those are sourcing .githooker/do with is do
+echo "[$(date)] $@" >> "$BASE/githooker.log"
+
 command=$1; shift
 $command $@
