@@ -1,0 +1,18 @@
+#!/usr/bin/expect -f
+
+set timeout 5
+
+set answer0 [lindex $argv 0];
+set answer1 [lindex $argv 1];
+set answer2 [lindex $argv 2];
+
+spawn ./helper.sh interactive
+
+expect -re "32mpre-push hook is enabled*.*disable*.*"
+send -- "$answer0\r"
+
+expect -re "33mpre-rebase hook is disabled*.*enable*.*"
+send -- "$answer1\r"
+ 
+expect -re "31mpre-commit hook is orphaned*.*delete*.*"
+send -- "$answer2\r"

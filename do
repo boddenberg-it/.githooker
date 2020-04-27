@@ -3,20 +3,21 @@
 BASE="$(git rev-parse --show-toplevel)"
 
 # colors for output messages
-r="\e[31m" # red
-y="\e[33m" # yellow
-g="\e[32m" # green
-d="\e[39m" # default
-cc="$d"    # current color    
+r="\x1B[31m" # red
+y="\x1B[33m" # yellow
+g="\x1B[32m" # green
+d="\x1B[39m" # default
+b="\x1B[1m" # bold
+u="\x1B[0m" # unbold
+cc="$d" # current color
 
 # generic/helper functions
 function generic_interactive {
     read -r answer
     if [ "$answer" = "y" ] || [ "$answer" = "yes" ]; then
-        echo -e "\t... above hook is going to be $3."
+        echo -e "\t... above hook is going to be $b$3$u.\n"
+        echo "$1 $2"
         $1 "$2"
-    else
-        echo -e "\t... above hook is staying as is."
     fi
 }
 
@@ -69,72 +70,82 @@ function enable {
 }
 
 function interactive { # argumentless function
-    echo "[INFO] each hook will be listed with its status. Say yes or no to toggle its state (y/N)."
+    echo -e "\n$b[INFO]$u each ${b}hook$u will be listed with its ${b}status$u. Say yes or no to change hook state. (y/${b}N$u)\n"
 
     # looping over hook in ./githooks/
     for hook in "$BASE"/githooks/*; do
         hook_without_extension="$(cut -d '.' -f1 "$hook")"
 
         if [ -f "$BASE/.git/hooks/$hook_without_extension" ]; then
-            echo -e "\t$hook_without_extension hook is ${g}enabled${d}. Do you want to disable it? (y/N)"
+            echo -e "\t${g}$hook_without_extension hook is enabled${d}. Do you want to ${b}disable$u it? (y/N)"
             generic_interactive disable "$hook" "enabled"
         else
-            echo -e "\t$hook_without_extension hook is ${y}disabled${d}. Do you want to enable it? (y/N)"
+            echo -e "\t${y}$hook_without_extension hook is disabled${d}. Do you want to ${b}enable$u it? (y/N)"
             generic_interactive enable "$hook" "disabled"
         fi 
     done
 
     # searching for orphaned hooks in ./.git/hooks
-    for hook in "$BASE"/.git/hooks; do
+    for hook in "$BASE"/.git/hooks/*; do
         # early return if file is sample file
-        if [[ "$hook" == *".sample"* ]]; then
+        if [[ "$hook" == *".sample" ]]; then
             continue
         fi
+
+        acutal_hook="$(find "$BASE"/githooks -name "$(basename $hook).*")"
         
-        path_of_linked_script_by_hook="$(find "$BASE"/githooks/$hook.*)"
-        
-        if [ ! -f $path_of_linked_script_by_hook ]; then
-            echo -e "\t${r}$hook hook is orphaned. Do you want to delete it? (y/N)${d}"
+        if [ -z $acutal_hook ] || [ ! -f $acutal_hook ]; then
+            echo -e "\t${r}$(basename $hook) hook is orphaned.$u Do you want to ${b}delete$u it? (y/N)${d}"
             generic_interactive disable "$hook" "deleted"
         fi
     done
 }
 
 function list { # argumentless function
-    echo "[INFO] listing status of all available hooks in ./githooks/ (${g}enabled${d}/${y}disabled${d}/${r}orphaned${d})"
-
+    echo -e "\n${b}[INFO]${u} listing all hooks ${b}(${g}enabled${d}/${y}disabled${d}/${r}orphaned${d})${u}"
     # looping over hooks in ./githooks/
-    for hook in "$BASE"/githooks/*; do
-        hook_without_extension="$(cut -d '.' -f1 "$hook")"
-    
-        if [ -f "$BASE/.git/hooks/hook_without_extension" ]; then
+    for hook_absolute_path in "$BASE"/githooks/*; do
+        
+        hook="${hook_absolute_path##*/}"
+        hook_without_extension="$(echo "$hook" | cut -d '.' -f1)"
+
+        if [ -f "$BASE/.git/hooks/$hook_without_extension" ]; then
             cc="$g"
         else
             cc="$y"
         fi
-        echo -e "\t${cc}$hook_without_extension hook${d}"
+        echo -e "\t${b}${cc}$hook_without_extension${d}${u}"
     done
 
     # searching for orphaned hooks in ./.git/hooks
-    for file in "$BASE"/.git/hooks; do
+    for file in "$BASE"/.git/hooks/*; do
         # early return if file is sample file
-        if [[ $1 == *".sample"* ]]; then
+        if [[ $file == *".sample" ]]; then
             continue
         fi
-        
-        path_of_linked_script_by_hook="$(find "$BASE"/githooks/$file.*)"
 
-        if [ ! -f $path_of_linked_script_by_hook ]; then
-            echo -e "\t${r}$file hook is orphaned!${d}"
+        # TODO: remove ${file##*/} with "basename" command for readability
+        path_of_linked_script_by_hook=$(find "$BASE"/githooks -name "${file##*/}.*")
+
+        if [ -z "$path_of_linked_script_by_hook" ] || [ ! -f "$path_of_linked_script_by_hook" ]; then
+            echo -e "\t${r}${file##*/}${d}"
         fi
     done
 }
 
-# short-hand aliases
-alias l="list"
-alias e="enable"
-alias d="disable"
-alias i="interactive"
+# short-hand commands
+function d {
+    delete $@
+}
+function e {
+    enable $@
+}
+function i {
+    interactive
+}
+function l {
+    list
+}
 
 # evaluating passed args 
 command=$1; shift
