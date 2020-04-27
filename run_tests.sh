@@ -183,7 +183,7 @@ create_hook pre-commit 2
 create_hook pre-push 2
 create_hook pre-rebase 2
 # command under test
-disable "--all" > /dev/null 2>&1
+disable --all > /dev/null 2>&1
 # evaluation
 if [ -f "$BASE/.git/hooks/pre-commit" ] || [ -f "$BASE/.git/hooks/pre-push" ] || [ -f "$BASE/.git/hooks/pre-rebase" ]; then
 	failure "disable - all hooks (--all)"
@@ -206,7 +206,7 @@ else
 	expect "$BASE/test_interactive.exp" "n" > /dev/null 2>&1
 	end="$(date +%s)"
 	# evaluation (based on time out)
-	if [ $((end-start)) -lt 5 ]; then
+	if [ $((end-start)) -lt 15 ]; then
 		success "interactive - smoke test (always no)"
 	else
 		failure "interactive - smoke test (always no)"
@@ -216,11 +216,11 @@ else
 	expect "$BASE/test_interactive.exp" "y" > /dev/null 2>&1
 	end="$(date +%s)"
 	# evaluations:
-	if [ $((end-start)) = 5 ]; then
-		"${r}${b}[TIMEOUT]${d} ${u}interactive - answer yes to all"
+	if [ $((end-start)) = 30 ]; then
+		success "${r}${b}[TIMEOUT]${d} ${u}interactive - answer yes to all"
 	fi
 	# check if orphaned pre-commit is deleted
-	if [ -f "$BASE/.git/hooks/pre-commit" ]; then
+	if [ ! -f "$BASE/.git/hooks/pre-commit" ]; then
 		success "interactive - delete orphaned hook"
 	else
 		failure "interactive - delete orphaned hook"
@@ -232,7 +232,7 @@ else
 		failure "interactive - disable enabled hook"
 	fi
 	# check if pre-rebase is enabled
-	if [ -f "$BASE/.git/hooks/pre-rebases" ]; then
+	if [ -f "$BASE/.git/hooks/pre-rebase" ]; then
 		success "interactive - enable disabled hook"
 	else
 		failure "interactive - enable disabled hook"
