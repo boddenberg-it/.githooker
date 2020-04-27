@@ -2,12 +2,12 @@
 BASE="$(git rev-parse --show-toplevel)"
 
 # check whether tests are invoked in .githooker and not in repo which is using it as a subomdule!
-if [ "$(basename "$BASE")" != "githooks" ]; then
+if [ "$(basename "$BASE")" != ".githooker" ]; then
 	# two checks to allow calling .githooker from super project
 	cd "$BASE/.githooker"
 	BASE="$(git rev-parse --show-toplevel)"
 	
-	if [ "$(basename "$BASE")" != ".githooker" ]; then
+	if [ "$(basename "$BASE")" != "githooks" ]; then
 		echo -e "\n[WARNING] calling .githooker tests on a different repo ($(basename "$BASE"))... aborting!\n"
 		exit 1
 	fi
@@ -64,19 +64,20 @@ mkdir -p "$hook_backup"
 cp "$BASE"/.git/hooks/* "$hook_backup"
 
 # begin testing
-echo -e "\n${b}######${u} starting .githooks test suites ${b}######${u}"
+echo -e "\n${b}######${u} starting .githooker test suites ${b}######${u}"
 final_test_result=0
 
+echo -e "\n${b}TESTs OF: .githooker/generic_hooks.sh$u"
+
 # LIST TESTS
-echo -e "\n${b}LIST TESTS$u"
-# setup
 ensure_clean_test_setup "list"
+# setup
 log="$BASE/tests/list.output"
 create_hook pre-commit 0
 create_hook pre-push 1
 create_hook pre-rebase 2
 # command under test
-list > log
+list > log 2>&1
 # evaluations
 if grep -q "31mpre-commit" "$log"; then
 	success "list test - finds$r oprhaned$d hook"
@@ -95,7 +96,6 @@ else
 fi
 
 # ENABLE TESTS
-echo -e "\n${b}ENABLE TESTS$u"
 ensure_clean_test_setup "enable one hook"
 # setup
 create_hook pre-commit 1
@@ -137,7 +137,6 @@ else
 fi
 
 # DISABLE TESTS
-echo -e "\n${b}DISABLE TESTS$u"
 ensure_clean_test_setup "disable one hook"
 # setup
 create_hook pre-commit 2
@@ -195,7 +194,6 @@ fi
 if [ expect -v > /dev/null 2>&1 ]; then
 	echo -e "\n${b}[INFO]$u No expect installation found skipping interactive tests..."
 else
-	echo -e "\n${b}INTERACTIVE TESTS$u"
 	# setup
 	ensure_clean_test_setup "interactive"
 	create_hook pre-commit 0
@@ -221,9 +219,9 @@ else
 	fi
 	# check if orphaned pre-commit is deleted
 	if [ -f "$BASE/.git/hooks/pre-commit" ]; then
-		failure "interactive test - delete orphaned hook"
-	else
 		success "interactive test - delete orphaned hook"
+	else
+		failure "interactive test - delete orphaned hook"
 	fi
 	# check it pre-push is disabled
 	if [ ! -f "$BASE/.git/hooks/pre-push" ]; then
@@ -239,9 +237,59 @@ else
 	fi
 fi
 
+echo -e "\n${b}TESTs OF: .githooker/generic_hooks.sh$u"
+# setup
+current_branch="$(git branch --show-current)"
+git branch -d testing_branch > /dev/null 2>&1 || true
+git branch testing_branch > /dev/null 2>&1 || true
+git checkout test > /dev/null 2>&1
+touch "$BASE/foo.check" "$BASE/bar.check"
+cat << EOF > "$BASE/githooks/pre-commit"
+#!/bin/bash
+source "$BASE.githooker/do"
+
+run_command_for_each_file "*.check" "echo \"list of expressions matches staged files\" > tests/\$changed_file\"
+
+run_command_for_each_file "*.does_multiple_command_regex_work,*.check" "echo \"list of expressions matches staged files\" > tests/\${changed_file}-multiple_regex"
+
+run_command_once "*.check" "echo \"list of expressions matches staged files\" > tests/run_command_once"
+
+run_command_once "*.nope,*.check" "echo \"list of expressions matches staged files\" > tests/run_command_once_multiple_regex; exit 1"
+
+EOF
+# actual commands
+enable pre-commit > /dev/null 2>&1
+git add foo.check bar.check foobar.one > /dev/null 2>&1
+git commit -m "Test .githooker/do: if u read this: write male to githooker@boddenberg-it.de" 
+# evaluations
+if [ -f "$BASE/tests/foo.check" ] && [ -f "$BASE/tests/bar.check" ]; then
+	success "run_command_for_each_file - one regex passed"
+else
+	failure "run_command_for_each_file - one regex passed"
+fi
+if [ -f "$BASE/tests/foo.check-multiple_regex" ] && [ -f "$BASE/tests/bar.check-multiple_regex" ]; then
+	success "run_command_for_each_file - multiple regex passed"
+else
+	failure "run_command_for_each_file - mutliple regex passed"
+fi
+if [ -f "$BASE/tests/tests/run_command_once" ]; then
+	success "run_command_once - one regex passed"
+else
+	failure "run_command_once - one regex passed"
+fi
+if [ -f "$BASE/tests/run_command_once_multiple_regex" ]; then
+	success "run_command_once - mutliple regex passed"
+else
+	failure "run_command_once - multiple regex passed"
+fi
+# clean up
+rm "$BASE/foo.check" "$BASE/bar.check" "$BASE/githooks/pre-commit" "$BASE"/tests/*
+git stash > /dev/null 2>&1 || true  
+git checkout "$current_branch" > /dev/null 2>&1
+
 # restoring old hooks and deleting backup
 ensure_clean_test_setup
-cp "$hook_backup"/* "$BASE"/.git/hooks/
+cp "$hook_backup"/* "$BASE/.git/hooks/"
 rm -rf "$hook_backup"
 echo
 exit $final_test_result
