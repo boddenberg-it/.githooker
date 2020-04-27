@@ -22,19 +22,14 @@ function generic_interactive {
 }
 
 function generic_toggle {
-    if [ $# -eq 2 ]; then
-        if [ "$2" = "--all" ]; then
-            for hook in githooks/*; do
+    if [ $# -eq 2 ] && [ "$2" = "--all" ]; then
+        for hook in githooks/*; do
                 $1 "$hook" "$(cut -d '.' -f1 "$hook")"
-            done
-        else
-            $1 "$2" "$(cut -d '.' -f1 "$2")"
-        fi
+        done
     else
-        command="$1"
-        shift
+        command="$1"; shift
         for hook in $@; do
-                $command "$hook" "$(cut -d '.' -f1 "$hook")"
+            $command "$hook" "$(cut -d '.' -f1 "$hook")"
         done
     fi
 }
@@ -43,16 +38,17 @@ function helper_enable {
     # ensure that passed gook holds actual extension:
     # a simple check whether a dot is in hook name should be sufficient,
     # because naming of all files within githooks/ must match list of git hooks.
-    hook=""
-    if [[ $1 == *"."* ]]; then
-        hook="$1"
-    else 
-        hook_absolute_path="$(find "$BASE/test" -name "$1.*")"
-        hook=${hook_absolute_path##*/}
+    hook="$1"
+    if [[ $1 != *"."* ]]; then
+        hook="$(find "$BASE/githooks" -name "$1.*")"
     fi
 
-    ln -s "$BASE/githooks/$hook" "$BASE/.git/hooks/$2"
-    echo -e "\t$2 hook ${g}enabled${d}"
+    hook="$BASE/githooks/$(basename "$hook")"  
+    link="$BASE/.git/hooks/$1"
+
+    # create symbolic link, if there just update it.
+    ln -s "$hook" "$link" 2> /dev/null || rm "$link"; ln -s "$hook" "$link"
+    echo -e "\t$b$1$u hook ${g}enabled${d}"
 }
 
 function helper_disable {
