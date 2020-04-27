@@ -106,9 +106,8 @@ function list { # argumentless function
     # looping over hooks in ./githooks/
     for hook_absolute_path in "$BASE"/githooks/*; do
         
-        hook="${hook_absolute_path##*/}"
+        hook="$(basename $hook_absolute_path)"
         hook_without_extension="$(echo "$hook" | cut -d '.' -f1)"
-
         if [ -f "$BASE/.git/hooks/$hook_without_extension" ]; then
             cc="$g"
         else
@@ -125,10 +124,9 @@ function list { # argumentless function
         fi
 
         # TODO: remove ${file##*/} with "basename" command for readability
-        path_of_linked_script_by_hook=$(find "$BASE"/githooks -name "${file##*/}.*")
-
+        path_of_linked_script_by_hook="$(find "$BASE"/githooks -name "$(basename $file).*")"
         if [ -z "$path_of_linked_script_by_hook" ] || [ ! -f "$path_of_linked_script_by_hook" ]; then
-            echo -e "\t${r}${file##*/}${d}"
+            echo -e "\t${r}$(basename $file)${d}"
         fi
     done
 }
