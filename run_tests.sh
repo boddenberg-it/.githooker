@@ -191,7 +191,8 @@ else
 fi
 
 # INTERACTIVE TESTS (check if expect is available)
-if expect -v > /dev/null; then
+expect -v > /dev/null 2>&1
+if [ $? -gt 0 ]; then
 	echo -e "${r}[WARNING]$u No expect installation found skipping interactive tests..."
 else
 	# setup
