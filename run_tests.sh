@@ -260,7 +260,7 @@ EOF
 # actual commands
 enable pre-commit > /dev/null 2>&1
 git add foo.check bar.check foobar.one > /dev/null 2>&1
-git commit -m "Test .githooker/do: if u read this: write male to githooker@boddenberg-it.de" 
+git commit -m "Test .githooker/do: if u read this: write male to githooker@boddenberg-it.de" > /dev/null 2>&1
 # evaluations
 if [ -f "$BASE/tests/foo.check" ] && [ -f "$BASE/tests/bar.check" ]; then
 	success "run_command_for_each_file - one regex passed"
@@ -283,13 +283,13 @@ else
 	failure "run_command_once - multiple regex passed"
 fi
 # clean up
-rm "$BASE/foo.check" "$BASE/bar.check" "$BASE/githooks/pre-commit" "$BASE"/tests/*
+rm "$BASE/foo.check" "$BASE/bar.check" "$BASE/githooks/pre-commit"
 git stash > /dev/null 2>&1 || true  
 git checkout "$current_branch" > /dev/null 2>&1
 
 # restoring old hooks and deleting backup
 ensure_clean_test_setup
 cp "$hook_backup"/* "$BASE/.git/hooks/"
-rm -rf "$hook_backup"
+rm -rf "$BASE"/tests/*
 echo
 exit $final_test_result
