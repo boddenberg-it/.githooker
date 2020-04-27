@@ -80,19 +80,19 @@ create_hook pre-rebase 2
 list > "$log"
 # evaluations
 if grep -q "31mpre-commit" "$log"; then
-	success "list test - finds$r oprhaned$d hook"
+	success "list - finds$r oprhaned$d hook"
 else
-	failure "list test - finds$r oprhaned$d hook"
+	failure "list - finds$r oprhaned$d hook"
 fi
 if grep -q "33mpre-push" "$log"; then
-   	success "list test - finds$y disabled$d hook"
+   	success "list - finds$y disabled$d hook"
 else
-	failure "list test - finds$y disabled$d hook"
+	failure "list - finds$y disabled$d hook"
 fi
 if grep -q "32mpre-rebase" "$log"; then
-   	success "list test - finds$g enabled$d hook"
+   	success "list - finds$g enabled$d hook"
 else
-	failure "list test - finds$g enabled$d hook"
+	failure "list - finds$g enabled$d hook"
 fi
 
 # ENABLE TESTS
@@ -103,9 +103,9 @@ create_hook pre-commit 1
 enable "pre-commit" > /dev/null 2>&1
 # evaluation
 if [ -f "$BASE/.git/hooks/pre-commit" ]; then
-	success "enable one hook"
+	success "enable - one hook"
 else
-	failure "enable one hook"
+	failure "enable - one hook"
 fi
 
 ensure_clean_test_setup "enable three hooks"
@@ -117,9 +117,9 @@ create_hook pre-rebase 1
 enable "pre-commit" "pre-push" "pre-rebase" > /dev/null 2>&1
 # evaluation
 if [ -f "$BASE/.git/hooks/pre-commit" ] && [ -f "$BASE/.git/hooks/pre-push" ] && [ -f "$BASE/.git/hooks/pre-rebase" ]; then
-	success "enable three hooks"
+	success "enable - three hooks"
 else
-	failure "enable three hooks"
+	failure "enable - three hooks"
 fi
 
 ensure_clean_test_setup "enable --all hooks"
@@ -131,9 +131,9 @@ create_hook pre-rebase 1
 enable --alls > /dev/null 2>&1
 # evaluation
 if [ -f "$BASE/.git/hooks/pre-commit" ] && [ -f "$BASE/.git/hooks/pre-push" ] && [ -f "$BASE/.git/hooks/pre-rebase" ]; then
-	success "enable --all hooks"
+	success "enable - all hooks (--all)"
 else
-	failure "enable --all hooks"
+	failure "enable - all hooks (--all)"
 fi
 
 # DISABLE TESTS
@@ -144,9 +144,9 @@ create_hook pre-commit 2
 disable "pre-commit" > /dev/null 2>&1
 # evaluation
 if [ -f "$BASE/.git/hooks/pre-commit" ]; then
-	failure "disable one hook"
+	failure "disable - one hook"
 else
-	success "disable one hook"
+	success "disable -  one hook"
 fi
 
 ensure_clean_test_setup "disable one hook"
@@ -157,9 +157,9 @@ disable "pre-commit" > /dev/null 2>&1
 # evaluation
 # check it pre-push is disabled
 if [ ! -f "$BASE/.git/hooks/pre-push" ]; then
-	success "disable orphaned hook"
+	success "disable - orphaned hook"
 else
-	failure "disable orhaned hook"
+	failure "disable - orhaned hook"
 fi
 
 ensure_clean_test_setup "disable three hooks"
@@ -171,9 +171,9 @@ create_hook pre-rebase 2
 disable "pre-commit" "pre-push" "pre-rebase" > /dev/null 2>&1
 # evaluation
 if [ -f "$BASE/.git/hooks/pre-commit" ] || [ -f "$BASE/.git/hooks/pre-push" ] || [ -f "$BASE/.git/hooks/pre-rebase" ]; then
-	failure "disable three hooks"
+	failure "disable - three hooks"
 else
-	success "disable three hooks"
+	success "disable - three hooks"
 fi
 
 ensure_clean_test_setup "disable --all hooks"
@@ -185,9 +185,9 @@ create_hook pre-rebase 2
 disable --alls > /dev/null 2>&1
 # evaluation
 if [ -f "$BASE/.git/hooks/pre-commit" ] || [ -f "$BASE/.git/hooks/pre-push" ] || [ -f "$BASE/.git/hooks/pre-rebase" ]; then
-	failure "disable --all hooks"
+	failure "disable - all hooks (--all)"
 else
-	success "disable --all hooks"
+	success "disable - all hooks (--all)"
 fi
 
 # INTERACTIVE TESTS (check if expect is available)
@@ -205,9 +205,9 @@ else
 	end="$(date +%s)"
 	# evaluation (based on time out)
 	if [ $((end-start)) -lt 5 ]; then
-		success "interactive test - answer no to all (smoke test)"
+		success "interactive - answer no to all (smoke test)"
 	else
-		failure "interactive test - answer no to all (smoke test)"
+		failure "interactive - answer no to all (smoke test)"
 	fi
 	# command under test
 	start="$(date +%s)"
@@ -215,25 +215,25 @@ else
 	end="$(date +%s)"
 	# evaluations:
 	if [ $((end-start)) = 5 ]; then
-		"${r}${b}[TIMEOUT]${d} ${u}interactive test - answer yes to all"
+		"${r}${b}[TIMEOUT]${d} ${u}interactive - answer yes to all"
 	fi
 	# check if orphaned pre-commit is deleted
 	if [ -f "$BASE/.git/hooks/pre-commit" ]; then
-		success "interactive test - delete orphaned hook"
+		success "interactive - delete orphaned hook"
 	else
-		failure "interactive test - delete orphaned hook"
+		failure "interactive - delete orphaned hook"
 	fi
 	# check it pre-push is disabled
 	if [ ! -f "$BASE/.git/hooks/pre-push" ]; then
-		success "interactive test - disable enabled hook"
+		success "interactive - disable enabled hook"
 	else
-		failure "interactive test - disable enabled hook"
+		failure "interactive - disable enabled hook"
 	fi
 	# check if pre-rebase is enabled
 	if [ -f "$BASE/.git/hooks/pre-rebases" ]; then
-		success "interactive test - enable disabled hook"
+		success "interactive - enable disabled hook"
 	else
-		failure "interactive test - enable disabled hook"
+		failure "interactive - enable disabled hook"
 	fi
 fi
 
