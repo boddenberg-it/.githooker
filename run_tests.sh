@@ -239,7 +239,6 @@ else
 	fi
 fi
 
-exit 0
 echo -e "\n${b}TESTS OF: .githooker/generic_hooks.sh$u"
 # setup
 current_branch="$(git branch --show-current)"
