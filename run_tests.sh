@@ -205,9 +205,9 @@ else
 	end="$(date +%s)"
 	# evaluation (based on time out)
 	if [ $((end-start)) -lt 5 ]; then
-		success "interactive - answer no to all (smoke test)"
+		success "interactive - smoke test (always no)"
 	else
-		failure "interactive - answer no to all (smoke test)"
+		failure "interactive - smoke test (always no)"
 	fi
 	# command under test
 	start="$(date +%s)"
