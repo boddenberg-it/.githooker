@@ -191,8 +191,8 @@ else
 fi
 
 # INTERACTIVE TESTS (check if expect is available)
-if [ expect -v > /dev/null 2>&1 ]; then
-	echo -e "\n${b}[INFO]$u No expect installation found skipping interactive tests..."
+if expect -v > /dev/null; then
+	echo -e "${r}[WARNING]$u No expect installation found skipping interactive tests..."
 else
 	# setup
 	ensure_clean_test_setup "interactive"
@@ -240,7 +240,7 @@ fi
 echo -e "\n${b}TESTS OF: .githooker/generic_hooks.sh$u"
 # setup
 current_branch="$(git branch --show-current)"
-git branch -d testing_branch > /dev/null 2>&1 || true
+git branch -d testing_branch > /dev/null 2>&1 || true
 git branch testing_branch > /dev/null 2>&1 || true
 git checkout test > /dev/null 2>&1
 touch "$BASE/foo.check" "$BASE/bar.check"
