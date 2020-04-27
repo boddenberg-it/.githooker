@@ -12,21 +12,12 @@ u="\x1B[0m" # unbold
 cc="$d" # current color
 
 # generic/helper functions
-function generic_interactive {
-    read -r answer
-    if [ "$answer" = "y" ] || [ "$answer" = "yes" ]; then
-        echo -e "\t... above hook is going to be $b$3$u.\n"
-        echo "$1 $2"
-        $1 "$2"
-    fi
-}
 
 # doesn't work for disable, because we do not look for orphaned ones,
 # seems like we can change it via parameter
 function generic_toggle {
     if [ "$3" = "--all" ]; then
         for hook in $2; do
-                echo "$1 "$hook" "$(cut -d '.' -f1 "$hook" 2> /dev/null)""
                 $1 "$(basename $hook)" "$(cut -d '.' -f1 "$hook" 2> /dev/null)"
         done
     else
@@ -50,11 +41,8 @@ function helper_enable {
     hook="$BASE/githooks/$(basename $hook)"  
     link="$BASE/.git/hooks/$2"
 
-    echo "arg: $1, hook $hook, link: $link"
     # create symbolic link, if there just update it.
-    echo "ln -s "$hook" "$link""
-    ln -s "$hook" "$link" 
-    #2> /dev/null || rm "$link"; ln -s "$hook" "$link"
+    ln -s "$hook" "$link" 2> /dev/null
     echo -e "\t$b$1$u hook ${g}enabled${d}"
 }
 
@@ -63,8 +51,14 @@ function helper_disable {
     if [[ $1 = *"."* ]]; then
         hook="$(basename $1 | cut -d "." -f1)"
     fi
+    
     rm "$BASE/.git/hooks/$hook" 2> /dev/null
-    echo -e "\t$b$1$u hook ${y}disabled${d}"
+
+    if [ ! -z $3 ]; then
+        echo -e "\t$b$1$u hook $3"
+    else
+        echo -e "\t$b$1$u hook ${y}disabled${d}"
+    fi
 }
 
 ## actual commands/task which can be invoked
@@ -76,20 +70,28 @@ function enable {
     generic_toggle "helper_enable" "$BASE/githooks/*" $@
 }
 
+#
+function generic_interactive {
+    read -r answer
+    if [ "$answer" = "y" ] || [ "$answer" = "yes" ]; then
+        $1 "$2" "$3" "$4"
+    fi
+}
+
 function interactive { # argumentless function
-    echo -e "\n$b[INFO]$u each ${b}hook$u will be listed with its ${b}status$u. Say yes or no to change hook state. (y/${b}N$u)\n"
+    echo -e "\n$b[INFO]$u each ${b}hook$u will be listed with its ${b}status$u. Say yes or no to change hook state. (y/${b}N$u)"
 
     # looping over hook in ./githooks/
     for hook in "$BASE"/githooks/*; do
         hook_without_extension="$(cut -d '.' -f1 "$hook")"
 
         if [ -f "$BASE/.git/hooks/$hook_without_extension" ]; then
-            echo -e "\t${g}$hook_without_extension hook is enabled${d}. Do you want to ${b}disable$u it? (y/N)"
-            generic_interactive disable "$hook" "enabled"
+            echo -e "\n\t${g}${b}$hook_without_extension${u} hook is enabled${d}. Do you want to ${b}disable${u} it? (y/N)"
+            generic_interactive helper_disable "$(basename $hook)"
         else
-            echo -e "\t${y}$hook_without_extension hook is disabled${d}. Do you want to ${b}enable$u it? (y/N)"
-            generic_interactive enable "$hook" "disabled"
-        fi 
+            echo -e "\n\t${y}${b}$hook_without_extension${u} hook is disabled${d}. Do you want to ${b}enable${u} it? (y/N)"
+            generic_interactive enable "$hook" " " " "
+        fi
     done
 
     # searching for orphaned hooks in ./.git/hooks
@@ -102,10 +104,11 @@ function interactive { # argumentless function
         acutal_hook="$(find "$BASE"/githooks -name "$(basename $hook).*")"
         
         if [ -z $acutal_hook ] || [ ! -f $acutal_hook ]; then
-            echo -e "\t${r}$(basename $hook) hook is orphaned.$u Do you want to ${b}delete$u it? (y/N)${d}"
-            generic_interactive disable "$hook" "deleted"
+            echo -e "\n\t${r}$(basename $hook) hook is orphaned.$u Do you want to ${b}delete$u it? (y/N)${d}"
+            generic_interactive helper_disable "$(basename $hook)" "foo" "${r}deleted${d}"
         fi
     done
+    echo
 }
 
 function list { # argumentless function
@@ -152,9 +155,9 @@ function l {
     list
 }
 
-# log every invocation in a log (test runs and actual hook are not included.
-# Those are sourcing .githooker/do with is do
-echo "[$(date)] $@" >> "$BASE/githooker.log"
+# log every invocation in a log (test runs and actual hooks
+# are not included. Those are sourcing .githooker/do with is do
+echo "[$(date)] $@" >> "$BASE/githooker.log" # todo change to .githooker
 
 command=$1; shift
 $command $@
