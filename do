@@ -52,7 +52,11 @@ function helper_enable {
 }
 
 function helper_disable {
-    rm "$BASE/.git/hooks/$2"
+    hook="$1"
+    if [[ $1 = *"."* ]]; then
+        hook="$(echo $1 | cut -d "." -f1)"
+    fi
+    rm "$BASE/.git/hooks/$hook" 2> /dev/null
     echo -e "\t$2 hook ${y}disabled${d}"
 }
 
@@ -129,7 +133,7 @@ function list { # argumentless function
 
 # short-hand commands
 function d {
-    delete $@
+    disable $@
 }
 function e {
     enable $@
