@@ -21,34 +21,40 @@ function generic_interactive {
     fi
 }
 
+# doesn't work for disable, because we do not look for orphaned ones,
+# seems like we can change it via parameter
 function generic_toggle {
-    if [ "$2" = "--all" ]; then
-        for hook in githooks/*; do
+    if [ "$3" = "--all" ]; then
+        for hook in $2; do
                 echo "$1 "$hook" "$(cut -d '.' -f1 "$hook" 2> /dev/null)""
-                $1 "$hook" "$(cut -d '.' -f1 "$hook" 2> /dev/null)"
+                $1 "$(basename $hook)" "$(cut -d '.' -f1 "$hook" 2> /dev/null)"
         done
     else
-        command="$1"; shift
+        command="$1"; shift; shift
         for hook in $@; do
-            $command "$hook" "$(cut -d '.' -f1 "$hook" 2> /dev/null)"
+            hook="$(basename $hook)"
+            "$command" "$hook" "$(echo $hook | cut -d '.' -f1 2> /dev/null)"
         done
     fi
 }
 
 function helper_enable {
+    hook="$1"
     # ensure that passed gook holds actual extension:
     # a simple check whether a dot is in hook name should be sufficient,
     # because naming of all files within githooks/ must match list of git hooks.
-    hook="$1"
-    if [[ $1 != *"."* ]]; then
-        hook="$(find "$BASE/githooks" -name "$1.*")"
+    if [[ $1 != *"."* ]]; then  
+        hook="$(find $BASE/githooks -name $1.*)"
     fi
 
-    hook="$BASE/githooks/$(basename "$hook")"  
-    link="$BASE/.git/hooks/$1"
+    hook="$BASE/githooks/$(basename $hook)"  
+    link="$BASE/.git/hooks/$2"
 
+    echo "arg: $1, hook $hook, link: $link"
     # create symbolic link, if there just update it.
-    ln -s "$hook" "$link" 2> /dev/null || rm "$link"; ln -s "$hook" "$link"
+    echo "ln -s "$hook" "$link""
+    ln -s "$hook" "$link" 
+    #2> /dev/null || rm "$link"; ln -s "$hook" "$link"
     echo -e "\t$b$1$u hook ${g}enabled${d}"
 }
 
@@ -63,11 +69,11 @@ function helper_disable {
 
 ## actual commands/task which can be invoked
 function disable {
-    generic_toggle "helper_disable" $@
+    generic_toggle "helper_disable" "$BASE/.git/hooks/*" $@ 
 }
 
 function enable {
-    generic_toggle "helper_enable" $@
+    generic_toggle "helper_enable" "$BASE/githooks/*" $@
 }
 
 function interactive { # argumentless function
