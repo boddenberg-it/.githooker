@@ -176,6 +176,7 @@ else
 	success "disable - three hooks"
 fi
 
+# TODO: test passing hook with extension, shouldn't break at all or even path! add those tests
 ensure_clean_test_setup "disable --all hooks"
 # setup
 create_hook pre-commit 2
