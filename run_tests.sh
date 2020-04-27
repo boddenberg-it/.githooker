@@ -2,12 +2,12 @@
 BASE="$(git rev-parse --show-toplevel)"
 
 # check whether tests are invoked in .githooker and not in repo which is using it as a subomdule!
-if [ "$(basename "$BASE")" != ".githooker" ]; then
+if [ "$(basename "$BASE")" != "githooks" ]; then
 	# two checks to allow calling .githooker from super project
 	cd "$BASE/.githooker"
 	BASE="$(git rev-parse --show-toplevel)"
 	
-	if [ "$(basename "$BASE")" != "githooks" ]; then
+	if [ "$(basename "$BASE")" != ".githooker" ]; then
 		echo -e "\n[WARNING] calling .githooker tests on a different repo ($(basename "$BASE"))... aborting!\n"
 		exit 1
 	fi
@@ -18,7 +18,7 @@ source "$BASE/do"
 
 function ensure_clean_test_setup {
 	# clean up actual hooks
-	rm -f "$BASE"/githooks/* 
+	rm -f "$BASE"/githooks/*
 
 	# clean up all symbolic links
 	for hook in "$BASE"/.git/hooks/*; do
@@ -67,7 +67,7 @@ cp "$BASE"/.git/hooks/* "$hook_backup"
 echo -e "\n${b}######${u} starting .githooker test suites ${b}######${u}"
 final_test_result=0
 
-echo -e "\n${b}TESTs OF: .githooker/do$u"
+echo -e "\n${b}TESTS OF: .githooker/do$u"
 
 # LIST TESTS
 ensure_clean_test_setup "list"
@@ -237,7 +237,7 @@ else
 	fi
 fi
 
-echo -e "\n${b}TESTs OF: .githooker/generic_hooks.sh$u"
+echo -e "\n${b}TESTS OF: .githooker/generic_hooks.sh$u"
 # setup
 current_branch="$(git branch --show-current)"
 git branch -d testing_branch > /dev/null 2>&1 || true
