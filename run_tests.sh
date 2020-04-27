@@ -138,8 +138,8 @@ fi
 
 # DISABLE TESTS
 echo -e "\n${b}DISABLE TESTS$u"
-# setup
 ensure_clean_test_setup "disable one hook"
+# setup
 create_hook pre-commit 2
 # command under test
 disable "pre-commit" > /dev/null 2>&1
@@ -148,6 +148,19 @@ if [ -f "$BASE/.git/hooks/pre-commit" ]; then
 	failure "disable one hook"
 else
 	success "disable one hook"
+fi
+
+ensure_clean_test_setup "disable one hook"
+# setup
+create_hook pre-commit 0
+# command under test
+disable "pre-commit" > /dev/null 2>&1
+# evaluation
+# check it pre-push is disabled
+if [ ! -f "$BASE/.git/hooks/pre-push" ]; then
+	success "disable orphaned hook"
+else
+	failure "disable orhaned hook"
 fi
 
 ensure_clean_test_setup "disable three hooks"
@@ -213,16 +226,16 @@ else
 		success "interactive test - delete orphaned hook"
 	fi
 	# check it pre-push is disabled
-	if [ -f "$BASE/.git/hooks/pre-push" ]; then
-		failure "interactive test - disable enabled hook"
-	else
+	if [ ! -f "$BASE/.git/hooks/pre-push" ]; then
 		success "interactive test - disable enabled hook"
+	else
+		failure "interactive test - disable enabled hook"
 	fi
 	# check if pre-rebase is enabled
-	if [ ! -f "$BASE/.git/hooks/pre-rebases" ]; then
-		failure "interactive test - enable disabled hook"
-	else
+	if [ -f "$BASE/.git/hooks/pre-rebases" ]; then
 		success "interactive test - enable disabled hook"
+	else
+		failure "interactive test - enable disabled hook"
 	fi
 fi
 
