@@ -2,7 +2,7 @@
 BASE="$(git rev-parse --show-toplevel)"
 
 # check whether tests are invoked in .githooker and not in repo which is using it as a subomdule!
-if [ "$(basename "$BASE")" != ".githooker" ]; then
+if [ "$(basename "$BASE")" != "githooks" ]; then
 	# two checks to allow calling .githooker from super project
 	cd "$BASE/.githooker"
 	BASE="$(git rev-parse --show-toplevel)"
@@ -76,7 +76,7 @@ create_hook pre-commit 0
 create_hook pre-push 1
 create_hook pre-rebase 2
 # command under test
-list > log 2>&1
+list > log
 # evaluations
 if grep -q "31mpre-commit" "$log"; then
 	success "list test - finds$r oprhaned$d hook"
