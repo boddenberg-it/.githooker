@@ -1,14 +1,8 @@
-# there's no bash ¯\_(ツ)_/¯
 language: python
 services: docker
+env:
+- distro=debian
+- distro=ubuntu
+- distro=archlinux
 
-jobs:
-  include:
-    - os: osx
-    - os: linux
-      env:
-        - distro=debian
-        - distro=ubuntu
-        - distro=archlinux
-
-script: ls
+script: docker build -f test/Dockerfile.$distro .
