@@ -1,0 +1,11 @@
+FROM ubuntu:latest
+
+RUN apt-get update; DEBIAN_FRONTEND=noninteractive \
+    apt-get --no-install-recommends install -y git expect
+
+# some distros do not seem to like github certs
+RUN git config --global http.sslVerify false ;\
+    git clone https://github.com/boddenberg-it/.githooker.git ;\
+    mkdir .githooker/githooks ;\
+    cd .githooker ;\
+    ./run_tests.sh
