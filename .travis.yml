@@ -1,9 +1,14 @@
 # there's no bash ¯\_(ツ)_/¯
 language: python
 services: docker
-env:
-- distro=debian
-- distro=ubuntu
-- distro=archlinux
 
-script: import os; print(os.getenv('distro'))
+jobs:
+  include:
+    - os: osx
+    - os: linux
+      env:
+        - distro=debian
+        - distro=ubuntu
+        - distro=archlinux
+
+script: ls
