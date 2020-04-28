@@ -6,4 +6,4 @@ env:
 - distro=ubuntu
 - distro=archlinux
 
-script: print(os.getenv('distro'))
+script: import os; print(os.getenv('distro'))
