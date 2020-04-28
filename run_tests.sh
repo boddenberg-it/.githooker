@@ -1,11 +1,12 @@
 #!/bin/bash 
-BASE="$(git rev-parse --show-toplevel)"
+BASE="$(git branch --format='%(refname:short)')"
+
 
 # check whether tests are invoked in .githooker and not in repo which is using it as a subomdule!
 if [ "$(basename "$BASE")" != "githooks" ]; then
 	# two checks to allow calling .githooker from super project
 	cd "$BASE/.githooker"
-	BASE="$(git rev-parse --show-toplevel)"
+	BASE="$(git branch --format='%(refname:short)')"
 	
 	if [ "$(basename "$BASE")" != ".githooker" ]; then
 		echo -e "\n[WARNING] calling .githooker tests on a different repo ($(basename "$BASE"))... aborting!\n"
@@ -191,7 +192,7 @@ disable "pre-commit" > /dev/null 2>&1
 if [ -f "$BASE/.git/hooks/pre-commit" ]; then
 	failure "disable - one hook"
 else
-	success "disable -  one hook"
+	success "disable - one hook"
 fi
 
 ensure_clean_test_setup "disable one hook"
