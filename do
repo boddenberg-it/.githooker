@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BASE=BASE="$(git rev-parse --show-toplevel)"
+BASE="$(git rev-parse --show-toplevel)"
 
 # colors for output messages
 r="\x1B[31m" # red
