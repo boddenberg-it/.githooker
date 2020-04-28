@@ -5,8 +5,5 @@ env:
 - distro=debian
 - distro=ubuntu
 - distro=archlinux
-  
-before_install:
-  - docker -v
 
-script: true
+script: print(os.getenv('distro'))
