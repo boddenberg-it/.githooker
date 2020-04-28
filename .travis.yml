@@ -7,6 +7,6 @@ env:
 - distro=archlinux
   
 before_install:
-  - docker build test/Dockerfile.{distro}
+  - import os; os.system("docker build test/Dockerfile.{distro}")
 
 script: true
