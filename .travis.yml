@@ -7,7 +7,6 @@ env:
 - distro=archlinux
   
 before_install:
-  - import os; os.system("docker -v")
   - docker -v
 
 script: true
