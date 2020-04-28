@@ -4,8 +4,8 @@ BASE="$(git rev-parse --show-toplevel)"
 
 # check whether tests are invoked in .githooker and not in repo which is using it as a subomdule!
 if [ "$(basename "$BASE")" != "githooks" ]; then
-	# two checks to allow calling .githooker from super project
-	cd "$BASE/.githooker"
+	# two checks to allow calling .githooker from super project, if not do not prompt anything.
+	cd "$BASE/.githooker" 2> /dev/null
 	BASE="$(git rev-parse --show-toplevel)"
 	
 	if [ "$(basename "$BASE")" != ".githooker" ]; then
