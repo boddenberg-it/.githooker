@@ -1,12 +1,12 @@
 #!/bin/bash 
-BASE="$(git branch --format='%(refname:short)')"
+BASE="$(git rev-parse --show-toplevel)"
 
 
 # check whether tests are invoked in .githooker and not in repo which is using it as a subomdule!
 if [ "$(basename "$BASE")" != "githooks" ]; then
 	# two checks to allow calling .githooker from super project
 	cd "$BASE/.githooker"
-	BASE="$(git branch --format='%(refname:short)')"
+	BASE="$(git rev-parse --show-toplevel)"
 	
 	if [ "$(basename "$BASE")" != ".githooker" ]; then
 		echo -e "\n[WARNING] calling .githooker tests on a different repo ($(basename "$BASE"))... aborting!\n"
@@ -70,7 +70,7 @@ final_test_result=0
 
 echo -e "\n${b}TESTS OF: .githooker/generic_hooks.sh$u"
 # setup
-current_branch="$(git branch --show-current)"
+current_branch="$(git branch --format='%(refname:short)' | head -n1)"
 git branch -d testing_branch > /dev/null 2>&1 || true
 git branch testing_branch > /dev/null 2>&1 || true
 git checkout test > /dev/null 2>&1

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BASE="$(git branch --format='%(refname:short)' | head -n1)"
+BASE=BASE="$(git rev-parse --show-toplevel)"
 
 # colors for output messages
 r="\x1B[31m" # red
