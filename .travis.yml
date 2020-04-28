@@ -1,0 +1,12 @@
+# there's no bash ¯\_(ツ)_/¯
+language: python
+services: docker
+env:
+- distro=debian
+- distro=ubuntu
+- distro=archlinux
+  
+before_install:
+  - docker build test/Dockerfile.{distro}
+
+script: true
