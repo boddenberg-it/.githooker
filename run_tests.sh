@@ -83,9 +83,9 @@ run_command_for_each_file "*.check" "touch"
 
 run_command_for_each_file "*.foo,*.bar" "touch"
 
-run_command_once "*.check" "touch run_command_once"
+run_command_once "*.check" "touch test_only_once_single_regex"
 
-run_command_once "*.nope,*.check" "touch run_command_once_multiple_regex ; exit 1"
+run_command_once "*.nope,*.check" "touch test_only_once_multiple_regex"
 
 EOF
 # actual commands
@@ -103,12 +103,12 @@ if [ -f "$BASE/foo.bar" ]; then
 else
 	failure "run_command_for_each_file - mutliple regex passed"
 fi
-if [ -f "$BASE/run_command_once" ]; then
+if [ -f "$BASE/test_only_once_single_regex" ]; then
 	success "run_command_once - one regex passed"
 else
 	failure "run_command_once - one regex passed"
 fi
-if [ -f "$BASE/run_command_once_multiple_regex" ]; then
+if [ -f "$BASE/test_only_once_multiple_regex" ]; then
 	success "run_command_once - mutliple regex passed"
 else
 	failure "run_command_once - multiple regex passed"
