@@ -1,4 +1,4 @@
-# .githooks - _yet another git hook helper_
+# .githooker [![Build Status](https://travis-ci.com/boddenberg-it/.githooker.svg?branch=master)](https://travis-ci.com/boddenberg-it/.githooker)
 
 ### tl;dr: 
 
