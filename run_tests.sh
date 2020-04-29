@@ -2,6 +2,8 @@
 BASE="$(git rev-parse --show-toplevel)"
 
 
+# Tips for debugging: simply search for it and remove "> /dev/null" from its 'actual command(s)'
+
 # check whether tests are invoked in .githooker and not in repo which is using it as a subomdule!
 if [ "$(basename "$BASE")" != "githooks" ]; then
 	# two checks to allow calling .githooker from super project, if not do not prompt anything.
@@ -64,17 +66,16 @@ hook_backup="$BASE/tests/hook_backup"
 mkdir -p "$hook_backup"
 cp "$BASE"/.git/hooks/* "$hook_backup"
 
-# begin testing
-echo -e "\n${b}######${u} starting .githooker test suites ${b}######${u}"
+echo -e "\n${b}######${u} starting .githooker test suites ${b}######${u}\n"
 final_test_result=0
 
-echo -e "\n${b}TESTS OF: .githooker/generic_hooks.sh$u"
 # switch_to_branch to not break local development, need stashing too (TODO)
 current_branch="$(git branch --format='%(refname:short)' | head -n1)"
 git branch -D testing_branch > /dev/null 2>&1
 git branch testing_branch > /dev/null
 git checkout testing_branch > /dev/null
 
+echo -e "\n${b}TESTS OF: .githooker/generic_hooks.sh$u"
 # TODO put in test/
 cat << EOF > "$BASE/githooks/pre-commit.sh"
 #!/bin/bash
@@ -156,7 +157,7 @@ ensure_clean_test_setup "enable one hook"
 # setup
 create_hook pre-commit 1
 # command under test
-enable "pre-commit" > /dev/null 2>&1
+enable "pre-commit" > /dev/null
 # evaluation
 if [ -f "$BASE/.git/hooks/pre-commit" ]; then
 	success "enable - one hook"
@@ -170,7 +171,7 @@ create_hook pre-commit 1
 create_hook pre-push 1
 create_hook pre-rebase 1
 # command under test
-enable "pre-commit" "pre-push" "pre-rebase" > /dev/null 2>&1
+enable "pre-commit" "pre-push" "pre-rebase" > /dev/null
 # evaluation
 if [ -f "$BASE/.git/hooks/pre-commit" ] && [ -f "$BASE/.git/hooks/pre-push" ] && [ -f "$BASE/.git/hooks/pre-rebase" ]; then
 	success "enable - three hooks"
@@ -184,7 +185,7 @@ create_hook pre-commit 1
 create_hook pre-push 1
 create_hook pre-rebase 1
 # command under test
-enable "--all" > /dev/null 2>&1
+enable "--all" > /dev/null
 # evaluation
 if [ -f "$BASE/.git/hooks/pre-commit" ] && [ -f "$BASE/.git/hooks/pre-push" ] && [ -f "$BASE/.git/hooks/pre-rebase" ]; then
 	success "enable - all hooks (--all)"
@@ -197,7 +198,7 @@ ensure_clean_test_setup "disable one hook"
 # setup
 create_hook pre-commit 2
 # command under test
-disable "pre-commit" > /dev/null 2>&1
+disable "pre-commit" > /dev/null
 # evaluation
 if [ -f "$BASE/.git/hooks/pre-commit" ]; then
 	failure "disable - one hook"
@@ -209,7 +210,7 @@ ensure_clean_test_setup "disable one hook"
 # setup
 create_hook pre-commit 0
 # command under test
-disable "pre-commit" > /dev/null 2>&1
+disable "pre-commit" > /dev/null
 # evaluation
 # check it pre-push is disabled
 if [ ! -f "$BASE/.git/hooks/pre-push" ]; then
@@ -297,11 +298,12 @@ fi
 
 # restoring old hooks and deleting backup
 cp "$hook_backup"/* "$BASE/.git/hooks/"
+
 # clean up
 rm "$BASE/foo.check" "$BASE/bar.check" "$BASE/githooks/pre-commit" > /dev/null 2>&1
 rm -rf "$BASE"/tests/*
 ensure_clean_test_setup
-
+echo
 git checkout "$current_branch" > /dev/null
 git branch -D testing_branch > /dev/null 2>&1
 echo
