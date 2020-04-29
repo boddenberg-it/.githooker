@@ -254,7 +254,7 @@ else
 	create_hook pre-rebase 1
 	# command under test
 	start="$(date +%s)"
-	expect "$BASE/test_interactive.exp" "n" > /dev/null 2>&1
+	expect "$BASE/tests/test_interactive.exp" "n" > /dev/null
 	end="$(date +%s)"
 	# evaluation (based on time out)
 	if [ $((end-start)) -lt 15 ]; then
@@ -264,7 +264,7 @@ else
 	fi
 	# command under test
 	start="$(date +%s)"
-	expect "$BASE/test_interactive.exp" "y" > /dev/null 2>&1
+	expect "$BASE/tests/test_interactive.exp" "y" #> /dev/null
 	end="$(date +%s)"
 	# evaluations:
 	if [ $((end-start)) = 30 ]; then
