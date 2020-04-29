@@ -1,14 +1,17 @@
 language: c
 services: docker
-os: osx
-env:
-- distro=debian
-- distro=ubuntu
-- distro=archlinux
-
+os: 
+  - osx
+  - linux
 script:
   - >
     set -ex;
     git config --global user.name "githooker";
     git config --global user.email "githooker@boddenberg.it";
-    docker build -f "$PWD/tests/Dockerfile.$distro" .
+    if [ "$TRAVIS_OS_NAME" == "linux" ]; then
+      docker build -f "$PWD/tests/Dockerfile.ubuntu" .;
+      docker build -f "$PWD/tests/Dockerfile.debian" .;
+      docker build -f "$PWD/tests/Dockerfile.archlinux" .;
+    else
+      ./test/run_tests.sh;
+    fi
