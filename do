@@ -1,6 +1,7 @@
 #!/bin/bash
 
-BASE="$(git rev-parse --show-toplevel)"
+# without slashes
+hook_dir="githooks"
 
 # colors for output messages
 r="\x1B[31m" # red
@@ -10,6 +11,8 @@ d="\x1B[39m" # default
 b="\x1B[1m" # bold
 u="\x1B[0m" # unbold
 cc="$d" # current color
+
+BASE="$(git rev-parse --show-toplevel)"
 
 # generic/helper functions
 
@@ -21,7 +24,7 @@ function generic_toggle {
                 $1 "$(basename $hook)" "$(cut -d '.' -f1 "$hook" 2> /dev/null)"
         done
     else
-        command="$1"; shift; shift
+        command="$1"; shift; shift # TODO: remove this when we use generic_interactive as supposed isBoolean style
         for hook in $@; do
             hook="$(basename $hook)"
             "$command" "$hook" "$(echo $hook | cut -d '.' -f1 2> /dev/null)"
@@ -37,11 +40,15 @@ function helper_enable {
     if [[ $1 != *"."* ]]; then  
         hook="$(find $BASE/githooks -name $1.*)"
     fi
+    # only because of --all
+    if [[ $hook != *"/"* ]] ; then
+        hook="$BASE/$hook_dir/$hook"
+    fi
 
     # rename link into .git/hooks/-ish
     link="$BASE/.git/hooks/$2"
     # create symbolic link, if there just update it.
-    cp "$hook" "$link"
+    ln "$hook" "$link"
     echo -e "\t$b$1$u hook ${g}enabled${d}"
 }
 
