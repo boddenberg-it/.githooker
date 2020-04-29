@@ -38,11 +38,10 @@ function helper_enable {
         hook="$(find $BASE/githooks -name $1.*)"
     fi
 
-    hook="$BASE/githooks/$(basename $hook)"  
+    # rename link into .git/hooks/-ish
     link="$BASE/.git/hooks/$2"
-
     # create symbolic link, if there just update it.
-    ln -s "$hook" "$link" 2> /dev/null
+    cp "$hook" "$link"
     echo -e "\t$b$1$u hook ${g}enabled${d}"
 }
 
