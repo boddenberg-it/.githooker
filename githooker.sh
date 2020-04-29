@@ -38,7 +38,7 @@ function helper_enable {
     # a simple check whether a dot is in hook name should be sufficient,
     # because naming of all files within githooks/ must match list of git hooks.
     if [[ $1 != *"."* ]]; then  
-        hook="$(find $BASE/githooks -name $1.*)"
+        hook="$(find $BASE/$hook_dir -name $1.*)"
     fi
     # only because of --all
     if [[ $hook != *"/"* ]] ; then
@@ -73,7 +73,7 @@ function disable {
 }
 
 function enable {
-    generic_toggle "helper_enable" "$BASE/githooks/*" $@
+    generic_toggle "helper_enable" "$BASE/$hook_dir/*" $@
 }
 
 #
@@ -88,7 +88,7 @@ function interactive { # argumentless function
     echo -e "\n$b[INFO]$u each ${b}hook$u will be listed with its ${b}status$u. Say yes or no to change hook state. (y/${b}N$u)"
 
     # looping over hook in ./githooks/
-    for hook in "$BASE"/githooks/*; do
+    for hook in "$BASE/$hook_dir/"*; do
         hook_without_extension="$(cut -d '.' -f1 "$hook")"
 
         if [ -f "$BASE/.git/hooks/$hook_without_extension" ]; then
@@ -107,7 +107,7 @@ function interactive { # argumentless function
             continue
         fi
 
-        acutal_hook="$(find "$BASE"/githooks -name "$(basename $hook).*")"
+        acutal_hook="$(find "$BASE/$hook_dir" -name "$(basename $hook).*")"
         
         if [ -z $acutal_hook ] || [ ! -f $acutal_hook ]; then
             echo -e "\n\t${r}$(basename $hook) hook is orphaned.$u Do you want to ${b}delete$u it? (y/N)${d}"
@@ -120,7 +120,7 @@ function interactive { # argumentless function
 function list { # argumentless function
     echo -e "\n${b}[INFO]${u} listing all hooks ${b}(${g}enabled${d}/${y}disabled${d}/${r}orphaned${d})${u}"
     # looping over hooks in ./githooks/
-    for hook_absolute_path in "$BASE"/githooks/*; do
+    for hook_absolute_path in "$BASE/$hook_dir/"*; do
         
         hook="$(basename $hook_absolute_path)"
         hook_without_extension="$(echo "$hook" | cut -d '.' -f1)"
@@ -140,7 +140,7 @@ function list { # argumentless function
         fi
 
         # TODO: remove ${file##*/} with "basename" command for readability
-        path_of_linked_script_by_hook="$(find "$BASE"/githooks -name "$(basename $file).*")"
+        path_of_linked_script_by_hook="$(find "$BASE"/$hook_dir -name "$(basename $file).*")"
         if [ -z "$path_of_linked_script_by_hook" ] || [ ! -f "$path_of_linked_script_by_hook" ]; then
             echo -e "\t${r}$(basename $file)${d}"
         fi
