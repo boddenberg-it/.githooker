@@ -1,0 +1,5 @@
+#!/bin/bash
+
+#"$(git rev-parse --show-toplevel)"/.githooker/run_tests.sh
+
+"$(git rev-parse --show-toplevel)"/githooker/run_tests.sh
