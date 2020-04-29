@@ -10,4 +10,4 @@ RUN git config --global http.sslVerify false ;\
     git clone https://github.com/boddenberg-it/.githooker.git ;\
     mkdir .githooker/githooks ;\
     cd .githooker ;\
-    ./run_tests.sh
+    ./tests/run_tests.sh
