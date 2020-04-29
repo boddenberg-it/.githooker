@@ -5,4 +5,4 @@ env:
 - distro=ubuntu
 - distro=archlinux
 
-script: docker build -f test/Dockerfile.$distro .
+script: git config --global user.name "githooker"; git config --global user.email "githooker@boddenberg.it"; docker build -f test/Dockerfile.$distro .
