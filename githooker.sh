@@ -147,20 +147,6 @@ function list { # argumentless function
     done
 }
 
-# short-hand commands
-function d {
-    disable $@
-}
-function e {
-    enable $@
-}
-function i {
-    interactive
-}
-function l {
-    list
-}
-
 # log every invocation in a log (test runs and actual hooks
 # are not included. Those are sourcing .githooker/do with is do
 echo "[$(date)] $@" >> "$BASE/githooker.log" # todo change to .githooker
