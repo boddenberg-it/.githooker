@@ -1,13 +1,14 @@
-language: c
+language: python
+
 services: docker
-os: osx
+
 env:
 - distro=debian
 - distro=ubuntu
 - distro=archlinux
 
 script:
-  - >
+  ->
     set -ex;
     git config --global user.name "githooker";
     git config --global user.email "githooker@boddenberg.it";
