@@ -7,4 +7,9 @@ env:
 - distro=ubuntu
 - distro=archlinux
 
-script: ./tests/travis.sh
+script:
+  - >
+    set -ex;
+    git config --global user.name "githooker";
+    git config --global user.email "githooker@boddenberg.it";
+    docker build -f "$PWD/tests/Dockerfile.$distro" .
