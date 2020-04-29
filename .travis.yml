@@ -1,7 +1,6 @@
 language: python
-
 services: docker
-
+os: osx
 env:
 - distro=debian
 - distro=ubuntu
