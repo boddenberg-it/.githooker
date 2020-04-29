@@ -1,0 +1,4 @@
+#!/bin/bash
+
+#"$(git rev-parse --show-toplevel)"/.githooker/githooker.sh disable $@
+"$(git rev-parse --show-toplevel)"/githooker.sh disable $@
