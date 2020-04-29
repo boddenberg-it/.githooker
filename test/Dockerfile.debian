@@ -4,6 +4,8 @@ RUN apt-get update; apt-get --no-install-recommends install -y git expect
 
 # some distros do not seem to like github certs
 RUN git config --global http.sslVerify false ;\
+    git config --global user.email "githooker@boddenberg.it" ;\
+    git config --global user.name "githooker" ;\
     git clone https://github.com/boddenberg-it/.githooker.git ;\
     mkdir .githooker/githooks ;\
     cd .githooker ;\
