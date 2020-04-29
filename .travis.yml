@@ -1,12 +1,10 @@
 language: python
+
 services: docker
+
 env:
 - distro=debian
 - distro=ubuntu
 - distro=archlinux
 
-script: 
-  - >
-    git config --global user.name "githooker";
-    git config --global user.email "githooker@boddenberg.it";
-    docker build -f "$PWD/test/Dockerfile.$distro" .;
+script: ./tests/travis.sh

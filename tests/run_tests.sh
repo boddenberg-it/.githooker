@@ -264,7 +264,7 @@ else
 	fi
 	# command under test
 	start="$(date +%s)"
-	expect "$BASE/tests/test_interactive.exp" "y" #> /dev/null
+	expect "$BASE/tests/test_interactive.exp" "y" > /dev/null
 	end="$(date +%s)"
 	# evaluations:
 	if [ $((end-start)) = 30 ]; then
