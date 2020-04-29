@@ -1,7 +1,6 @@
 #!/bin/bash 
 BASE="$(git rev-parse --show-toplevel)"
 
-
 # Tips for debugging: simply search for it and remove "> /dev/null" from its 'actual command(s)'
 
 # check whether tests are invoked in .githooker and not in repo which is using it as a subomdule!
@@ -60,11 +59,6 @@ function create_hook {
 		rm "$link"
 	fi
 }
-
-# create backup of .git/hooks/*
-hook_backup="$BASE/tests/hook_backup"
-mkdir -p "$hook_backup"
-cp "$BASE"/.git/hooks/* "$hook_backup"
 
 echo -e "\n${b}######${u} starting .githooker test suites ${b}######${u}\n"
 final_test_result=0
@@ -296,12 +290,10 @@ else
 	fi
 fi
 
-# restoring old hooks and deleting backup
-cp "$hook_backup"/* "$BASE/.git/hooks/"
-
 # clean up
-rm "$BASE/foo.check" "$BASE/bar.check" "$BASE/githooks/pre-commit" > /dev/null 2>&1
-rm -rf "$BASE"/tests/*
+rm "$BASE/foo.check" "$BASE/bar.check" "$BASE/githooks/pre-commit" \
+	test_only_once_single_regex test_only_once_multiple_regex > /dev/null 2>&1
+
 ensure_clean_test_setup
 echo
 git checkout "$current_branch" > /dev/null
