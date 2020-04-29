@@ -16,7 +16,7 @@ if [ "$(basename "$BASE")" != "githooks" ]; then
 fi
 
 # sourcing script under test
-source "$BASE/pimp.sh"
+source "$BASE/githooker.sh"
 
 function ensure_clean_test_setup {
 	# clean up actual hooks
