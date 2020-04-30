@@ -12,29 +12,27 @@ b="\x1B[1m"  # bold
 u="\x1B[0m"  # unbold
 cc="$d"      # current color
 
-# generic/helper functions
-function helper_enable {
+# both helper_{enable,disable} are the actual commands.
+# but their names are sacrificed for .githooker/{enable,disable}
+function actual_enable {
     hook="$1"
-    # ensure that passed gook holds actual extension:
-    # a simple check whether a dot is in hook name should be sufficient,
-    # because naming of all files within githooks/ must match list of git hooks.
+    # get hook extension if missing
     if [[ $1 != *"."* ]]; then  
         hook="$(find $BASE/$hook_dir -name $1.*)"
     fi
-    # only because of --all
+    # get hook path if missing
     if [[ $hook != *"/"* ]] ; then
         hook="$BASE/$hook_dir/$hook"
     fi
 
-    # rename link into .git/hooks/-ish
-    link="$BASE/.git/hooks/$2"
-    # create symbolic link, if there just update it.
-    ln "$hook" "$link"
+    ln "$hook" "$BASE/.git/hooks/$2"
+
     echo -e "\t$b$1$u hook ${g}enabled${d}"
 }
 
-function helper_disable {
+function actual_disable {
     hook="$1"
+    # remove hook extension if there
     if [[ $1 = *"."* ]]; then
         hook="$(basename $1 | cut -d "." -f1)"
     fi
@@ -42,21 +40,21 @@ function helper_disable {
     rm "$BASE/.git/hooks/$hook" 2> /dev/null
 
     if [ ! -z $3 ]; then
+        # orphaned hook links are deleted not disabled!
         echo -e "\t$b$1$u hook $3"
     else
         echo -e "\t$b$1$u hook ${y}disabled${d}"
     fi
 }
 
-# doesn't work for disable, because we do not look for orphaned ones,
-# seems like we can change it via parameter
 function generic_toggle {
     if [ "$3" = "--all" ]; then
         for hook in $2; do
+                # enable/disable pre-commit.sh pre.co
                 $1 "$(basename $hook)" "$(cut -d '.' -f1 "$hook" 2> /dev/null)"
         done
     else
-        command="$1"; shift; shift # TODO: remove this when we use generic_interactive as supposed isBoolean style
+        command="$1"; shift; shift
         for hook in $@; do
             hook="$(basename $hook)"
             "$command" "$hook" "$(echo $hook | cut -d '.' -f1 2> /dev/null)"
@@ -66,14 +64,14 @@ function generic_toggle {
 
 ## actual commands/task which can be invoked
 function disable {
-    generic_toggle "helper_disable" "$BASE/.git/hooks/*" $@ 
+    generic_toggle "actual_disable" "$BASE/.git/hooks/*" $@
 }
 
 function enable {
-    generic_toggle "helper_enable" "$BASE/$hook_dir/*" $@
+    generic_toggle "actual_enable" "$BASE/$hook_dir/*" $@
 }
 
-#
+# used by interactive
 function awnser {
     read -r user_answer
     if [ "$user_answer" = "y" ] || [ "$user_answer" = "yes" ]; then
@@ -91,12 +89,12 @@ function interactive { # argumentless function
         if [ -f "$BASE/.git/hooks/$hook_without_extension" ]; then
             echo -e "\n\t${g}${b}$hook_without_extension${u} hook is enabled${d}. Do you want to ${b}disable${u} it? (y/N)"
             if [ "$(awnser)" = "yes" ]; then
-                helper_disable "$(basename $hook)"
+                actual_disable "$(basename $hook)"
             fi
         else
             echo -e "\n\t${y}${b}$hook_without_extension${u} hook is disabled${d}. Do you want to ${b}enable${u} it? (y/N)"
             if [ "$(awnser)" = "yes" ]; then
-                helper_enable "$hook" "$hook_without_extension"
+                actual_enable "$hook" "$hook_without_extension"
             fi
         fi
     done
@@ -115,7 +113,7 @@ function interactive { # argumentless function
             echo -e "\n\t${r}$(basename $hook) hook is orphaned.$u Do you want to ${b}delete$u it? (y/N)${d}"
 
             if [ "$(awnser)" = "yes" ]; then
-                helper_disable "$(basename $hook)" "foo" "${r}deleted${d}"
+                actual_disable "$(basename $hook)" "foo" "${r}deleted${d}"
             fi
         fi
     done
