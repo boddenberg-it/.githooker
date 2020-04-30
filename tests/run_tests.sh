@@ -69,9 +69,16 @@ if [ "$(basename "$BASE")" != "$hook_dir" ]; then
 	fi
 fi
 
-# sourcing script under test
-
+# check whether we're called from .githooker or super project
 BASE="$(git rev-parse --show-toplevel)"
+echo "git project: $BASE"
+
+if [[ "$BASE" != *".githooker" ]]; then
+	cd .githooker
+	BASE="$(git rev-parse --show-toplevel)"
+fi
+
+# sourcing script under test for direct invokations
 source "$BASE/githooker.sh"
 
 # one may run tests before creating .githooks
@@ -79,7 +86,8 @@ mkdir $hook_dir || true
 
 final_test_result=0
 
-# switch_to_branch to not break local development, need stashing too (TODO)
+# switch_to_branch to not break local development
+# TODO: needs stashing for local development only
 current_branch="$(git branch --format='%(refname:short)' | head -n1)"
 git branch -D testing_branch > /dev/null 2>&1
 git branch testing_branch > /dev/null
