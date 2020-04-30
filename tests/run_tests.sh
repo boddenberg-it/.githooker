@@ -1,13 +1,13 @@
 #!/bin/bash 
-BASE="$(git rev-parse --show-toplevel)"
-
 # Tips for debugging: simply search for it and remove "> /dev/null" from its 'actual command(s)'
 # output from stderr may appear within successfully test cases.
+
+BASE="$(git rev-parse --show-toplevel)"
 
 # check whether tests are invoked in .githooker and not in repo which is using it as a subomdule!
 if [ "$(basename "$BASE")" != "githooks" ]; then
 	# two checks to allow calling .githooker from super project, if not do not prompt anything.
-	cd "$BASE/.githooker" 2> /dev/null
+	cd "$BASE/.githooker" 2> /dev/null || true
 	BASE="$(git rev-parse --show-toplevel)"
 	
 	if [ "$(basename "$BASE")" != ".githooker" ]; then
@@ -244,7 +244,7 @@ else
 fi
 
 # INTERACTIVE TESTS (check if expect is available)
-expect -v > /dev/null 2>&1
+expect -v > /dev/null
 if [ $? -gt 0 ]; then
 	echo -e "${r}[WARNING]$u No expect installation found skipping interactive tests..."
 else
