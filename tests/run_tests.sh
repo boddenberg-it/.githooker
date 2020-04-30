@@ -85,7 +85,7 @@ echo -e "\n${b}######${u} starting .githooker test suites ${b}######${u}\n"
 
 echo -e "${b}TESTS OF: .githooker/generic_hooks.sh$u"
 
-source "$BASE/tests/test_generic_hooks.sh"
+source "$BASE/tests/generic_hooks_test.sh"
 
 echo -e "\n${b}TESTS OF: .githooker/* commands$u"
 
