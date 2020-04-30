@@ -8,11 +8,9 @@ r="\x1B[31m" # red
 y="\x1B[33m" # yellow
 g="\x1B[32m" # green
 d="\x1B[39m" # default
-b="\x1B[1m" # bold
-u="\x1B[0m" # unbold
-cc="$d" # current color
-
-BASE="$(git rev-parse --show-toplevel)"
+b="\x1B[1m"  # bold
+u="\x1B[0m"  # unbold
+cc="$d"      # current color
 
 # generic/helper functions
 function helper_enable {
@@ -154,9 +152,7 @@ function list { # argumentless function
     done
 }
 
-# log every invocation in a log (test runs and actual hooks
-# are not included. Those are sourcing .githooker/do with is do
-echo "[$(date)] $@" >> "$BASE/githooker.log" # todo change to .githooker
+BASE="$(git rev-parse --show-toplevel)"
 
 command=$1; shift
 $command $@
