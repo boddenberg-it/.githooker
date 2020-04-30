@@ -18,16 +18,14 @@ cc="$d"      # current color
 # but their names are sacrificed for .githooker/{enable,disable}
 function actual_enable {
     hook="$1"
-    # get hook extension if missing
+
+    # get hook extension
     if [[ $1 != *"."* ]]; then  
        hook="$(find "$BASE/$hook_dir" -name "$1.*")"
     fi
-    # get hook path if missing
-    if [[ $hook != *"/"* ]] ; then
-        hook="$BASE/$hook_dir/$hook"
-    fi
 
-    ln "$hook" "$BASE/.git/hooks/$2"
+    # "../.." is necessary because git hooks spawn in .git/hooks/
+    ln -s -f "../../$hook_dir/$hook" "$BASE/.git/hooks/$2"
 
     echo -e "\t$b$1$u hook ${g}enabled${d}"
 }
