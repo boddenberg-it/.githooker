@@ -18,7 +18,7 @@ function actual_enable {
     hook="$1"
     # get hook extension if missing
     if [[ $1 != *"."* ]]; then  
-        hook="$(find $BASE/$hook_dir -name $1.*)"
+       hook="$(find "$BASE/$hook_dir" -name "$1.*")"
     fi
     # get hook path if missing
     if [[ $hook != *"/"* ]] ; then
@@ -39,7 +39,7 @@ function actual_disable {
     
     rm "$BASE/.git/hooks/$hook" 2> /dev/null
 
-    if [ ! -z $3 ]; then
+    if [ -n "$3" ]; then
         # orphaned hook links are deleted not disabled!
         echo -e "\t$b$1$u hook $3"
     else
@@ -80,7 +80,7 @@ function awnser {
 }
 
 function interactive { # argumentless function
-    echo -e "\n$b[INFO]$u each ${b}hook$u will be listed with its ${b}status$u. Say yes or no to change hook state. (y/${b}N$u)"
+    echo -e "\n${b}[INFO]${u} each ${b}hook$u will be listed with its ${b}status$u. Say yes or no to change hook state. (y/${b}N$u)"
 
     # looping over hook in ./githooks/
     for hook in "$BASE/$hook_dir/"*; do
@@ -111,7 +111,7 @@ function interactive { # argumentless function
 
         hook_script="$(find "$BASE/$hook_dir" -name "$(basename $hook).*")"
 
-        if [ -z $acutal_hook ] || [ ! -f $hook_script ]; then
+        if [ -z $hook_script ] || [ ! -f $hook_script ]; then
             echo -e "\n\t${r}$(basename $hook) hook is orphaned.$u Do you want to ${b}delete$u it? (y/N)${d}"
 
             if [ "$(awnser)" = "yes" ]; then
