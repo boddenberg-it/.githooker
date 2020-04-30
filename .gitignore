@@ -1,3 +1,5 @@
-/githooks/
-githooker.log
+#
+/.githooks_for_testing/
+
+# files which may aren't cleaned up by tests
 tests/list.output

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # without slashes
-hook_dir="githooks"
+hook_dir=".githooks_for_testing"
 
 BASE="$(git rev-parse --show-toplevel)"
 
