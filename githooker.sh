@@ -15,23 +15,6 @@ cc="$d" # current color
 BASE="$(git rev-parse --show-toplevel)"
 
 # generic/helper functions
-
-# doesn't work for disable, because we do not look for orphaned ones,
-# seems like we can change it via parameter
-function generic_toggle {
-    if [ "$3" = "--all" ]; then
-        for hook in $2; do
-                $1 "$(basename $hook)" "$(cut -d '.' -f1 "$hook" 2> /dev/null)"
-        done
-    else
-        command="$1"; shift; shift # TODO: remove this when we use generic_interactive as supposed isBoolean style
-        for hook in $@; do
-            hook="$(basename $hook)"
-            "$command" "$hook" "$(echo $hook | cut -d '.' -f1 2> /dev/null)"
-        done
-    fi
-}
-
 function helper_enable {
     hook="$1"
     # ensure that passed gook holds actual extension:
@@ -67,6 +50,22 @@ function helper_disable {
     fi
 }
 
+# doesn't work for disable, because we do not look for orphaned ones,
+# seems like we can change it via parameter
+function generic_toggle {
+    if [ "$3" = "--all" ]; then
+        for hook in $2; do
+                $1 "$(basename $hook)" "$(cut -d '.' -f1 "$hook" 2> /dev/null)"
+        done
+    else
+        command="$1"; shift; shift # TODO: remove this when we use generic_interactive as supposed isBoolean style
+        for hook in $@; do
+            hook="$(basename $hook)"
+            "$command" "$hook" "$(echo $hook | cut -d '.' -f1 2> /dev/null)"
+        done
+    fi
+}
+
 ## actual commands/task which can be invoked
 function disable {
     generic_toggle "helper_disable" "$BASE/.git/hooks/*" $@ 
@@ -99,7 +98,7 @@ function interactive { # argumentless function
         else
             echo -e "\n\t${y}${b}$hook_without_extension${u} hook is disabled${d}. Do you want to ${b}enable${u} it? (y/N)"
             if [ "$(awnser)" = "yes" ]; then
-                enable "$hook" " " " "
+                helper_enable "$hook" "$hook_without_extension"
             fi
         fi
     done
@@ -116,7 +115,7 @@ function interactive { # argumentless function
         if [ -z $acutal_hook ] || [ ! -f $acutal_hook ]; then
             echo -e "\n\t${r}$(basename $hook) hook is orphaned.$u Do you want to ${b}delete$u it? (y/N)${d}"
             if [ "$(awnser)" = "yes" ]; then
-                answer helper_disable "$(basename $hook)" "foo" "${r}deleted${d}"
+                helper_disable "$(basename $hook)" "foo" "${r}deleted${d}"
             fi
         fi
     done
