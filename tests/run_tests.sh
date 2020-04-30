@@ -74,6 +74,9 @@ fi
 BASE="$(git rev-parse --show-toplevel)"
 source "$BASE/githooker.sh"
 
+# one may run tests before creating .githooks
+mkdir $hook_dir || true
+
 final_test_result=0
 
 # switch_to_branch to not break local development, need stashing too (TODO)
@@ -84,11 +87,11 @@ git checkout testing_branch > /dev/null
 
 echo -e "\n${b}######${u} starting .githooker test suites ${b}######${u}\n"
 
-echo -e "${b}TESTS OF: .githooker/generic_hooks.sh$u"
+echo -e "${b}TESTS FOR: .githooker/generic_hooks.sh$u"
 
 source "$BASE/tests/generic_hooks_test.sh"
 
-echo -e "\n${b}TESTS OF: .githooker/* commands$u"
+echo -e "\n${b}TESTS FOR: .githooker/* commands$u"
 
 source "$BASE/tests/list_test.sh"
 
