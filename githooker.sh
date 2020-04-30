@@ -88,11 +88,13 @@ function interactive { # argumentless function
 
         if [ -f "$BASE/.git/hooks/$hook_without_extension" ]; then
             echo -e "\n\t${g}${b}$hook_without_extension${u} hook is enabled${d}. Do you want to ${b}disable${u} it? (y/N)"
+
             if [ "$(awnser)" = "yes" ]; then
                 actual_disable "$(basename $hook)"
             fi
         else
             echo -e "\n\t${y}${b}$hook_without_extension${u} hook is disabled${d}. Do you want to ${b}enable${u} it? (y/N)"
+
             if [ "$(awnser)" = "yes" ]; then
                 actual_enable "$hook" "$hook_without_extension"
             fi
@@ -121,12 +123,14 @@ function interactive { # argumentless function
 }
 
 function list { # argumentless function
+
     echo -e "\n${b}[INFO]${u} listing all hooks ${b}(${g}enabled${d}/${y}disabled${d}/${r}orphaned${d})${u}"
-    # looping over hooks in ./githooks/
+
     for hook_absolute_path in "$BASE/$hook_dir/"*; do
         
         hook="$(basename $hook_absolute_path)"
         hook_without_extension="$(echo "$hook" | cut -d '.' -f1)"
+
         if [ -f "$BASE/.git/hooks/$hook_without_extension" ]; then
             cc="$g"
         else
@@ -135,15 +139,15 @@ function list { # argumentless function
         echo -e "\t${b}${cc}$hook_without_extension${d}${u}"
     done
 
-    # searching for orphaned hooks in ./.git/hooks
+    # searching for orphaned-hooks/broken-links
     for file in "$BASE"/.git/hooks/*; do
-        # early return if file is sample file
+
         if [[ $file == *".sample" ]]; then
             continue
         fi
 
-        # TODO: remove ${file##*/} with "basename" command for readability
         path_of_linked_script_by_hook="$(find "$BASE"/$hook_dir -name "$(basename $file).*")"
+
         if [ -z "$path_of_linked_script_by_hook" ] || [ ! -f "$path_of_linked_script_by_hook" ]; then
             echo -e "\t${r}$(basename $file)${d}"
         fi
