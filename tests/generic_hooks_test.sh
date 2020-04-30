@@ -1,5 +1,5 @@
 # create githook script with actual content
-cat << EOF > "$BASE/githooks/pre-commit.sh"
+cat << EOF > "$BASE/$hook_dir/pre-commit.sh"
 #!/bin/bash
 source "./generic_hooks.sh"
 
@@ -12,7 +12,7 @@ run_command_once "*.check" "touch test_only_once_single_regex"
 run_command_once "*.nope,*.check" "touch test_only_once_multiple_regex"
 
 EOF
-chmod 755 "$BASE/githooks/pre-commit.sh"
+chmod 755 "$BASE/$hook_dir/pre-commit.sh"
 
 enable pre-commit > /dev/null
 

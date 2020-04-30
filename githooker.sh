@@ -3,6 +3,8 @@
 # without slashes
 hook_dir="githooks"
 
+BASE="$(git rev-parse --show-toplevel)"
+
 # colors for output messages
 r="\x1B[31m" # red
 y="\x1B[33m" # yellow
@@ -82,7 +84,6 @@ function awnser {
 function interactive { # argumentless function
     echo -e "\n${b}[INFO]${u} each ${b}hook$u will be listed with its ${b}status$u. Say yes or no to change hook state. (y/${b}N$u)"
 
-    # looping over hook in ./githooks/
     for hook in "$BASE/$hook_dir/"*; do
         hook_without_extension="$(cut -d '.' -f1 "$hook")"
 
@@ -153,8 +154,6 @@ function list { # argumentless function
         fi
     done
 }
-
-BASE="$(git rev-parse --show-toplevel)"
 
 command=$1; shift
 $command $@

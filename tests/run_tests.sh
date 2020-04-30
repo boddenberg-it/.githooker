@@ -4,7 +4,7 @@
 
 function ensure_clean_test_setup {
 	# clean up actual hooks
-	rm -f "$BASE"/githooks/*
+	rm -f "$BASE"/$hook_dir/*
 
 	# clean up all symbolic links
 	for hook in "$BASE"/.git/hooks/*; do
@@ -24,26 +24,26 @@ function failure {
 }
 
 function orphaned_hook {
-	ln -s "$BASE/githooks/$1.ext" "$BASE/.git/hooks/$1"
+	ln -s "$BASE/$hook_dir/$1.ext" "$BASE/.git/hooks/$1"
 }
 
 function disabled_hook {
-	echo "$1" > "$BASE/githooks/$1.ext"
+	echo "$1" > "$BASE/$hook_dir/$1.ext"
 }
 
 function enabled_hook {
-	echo "$1" > "$BASE/githooks/$1.ext"
-	ln -s "$BASE/githooks/$1.ext" "$BASE/.git/hooks/$1"
+	echo "$1" > "$BASE/$hook_dir/$1.ext"
+	ln -s "$BASE/$hook_dir/$1.ext" "$BASE/.git/hooks/$1"
 }
 function create_hook {
 	# $1:
 	#	- hook e.g. 'pre-commit', 'post-merge'
 	# $2: 
 	#	- 0 symbolic link in .git/hooks/ (orphaned)
-	#	- 1 creates hook in githooks/ (disabled)
+	#	- 1 creates hook in $hook_dir/ (disabled)
 	#	- * creates both of the above (enabled)
 	
-	hook="$BASE/githooks/$1.ext"
+	hook="$BASE/$hook_dir/$1.ext"
 	link="$BASE/.git/hooks/$1"
 	
 	echo "$1" > "$hook"
@@ -56,10 +56,8 @@ function create_hook {
 	fi
 }
 
-BASE="$(git rev-parse --show-toplevel)"
-
 # check whether tests are invoked in .githooker and not in repo which is using it as a subomdule!
-if [ "$(basename "$BASE")" != "githooks" ]; then
+if [ "$(basename "$BASE")" != "$hook_dir" ]; then
 
 	# two checks to allow calling .githooker from super project, if not do not prompt anything.
 	cd "$BASE/.githooker" 2> /dev/null || true
@@ -70,7 +68,10 @@ if [ "$(basename "$BASE")" != "githooks" ]; then
 		exit 1
 	fi
 fi
+
 # sourcing script under test
+
+BASE="$(git rev-parse --show-toplevel)"
 source "$BASE/githooker.sh"
 
 final_test_result=0
@@ -98,7 +99,7 @@ source "$BASE/tests/disable_test.sh"
 source "$BASE/tests/interactive_test.sh"
 
 # clean up
-rm "$BASE/foo.check" "$BASE/bar.check" "$BASE/githooks/pre-commit" \
+rm "$BASE/foo.check" "$BASE/bar.check" "$BASE/$hook_dir/pre-commit" \
 	test_only_once_single_regex test_only_once_multiple_regex > /dev/null 2>&1
 
 ensure_clean_test_setup
