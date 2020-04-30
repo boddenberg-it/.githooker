@@ -105,21 +105,23 @@ function interactive { # argumentless function
 
     # searching for orphaned hooks in ./.git/hooks
     for hook in "$BASE"/.git/hooks/*; do
+
         # early return if file is sample file
         if [[ "$hook" == *".sample" ]]; then
             continue
         fi
 
-        acutal_hook="$(find "$BASE/$hook_dir" -name "$(basename $hook).*")"
-        
-        if [ -z $acutal_hook ] || [ ! -f $acutal_hook ]; then
+        hook_script="$(find "$BASE/$hook_dir" -name "$(basename $hook).*")"
+
+        if [ -z $acutal_hook ] || [ ! -f $hook_script ]; then
             echo -e "\n\t${r}$(basename $hook) hook is orphaned.$u Do you want to ${b}delete$u it? (y/N)${d}"
+
             if [ "$(awnser)" = "yes" ]; then
                 helper_disable "$(basename $hook)" "foo" "${r}deleted${d}"
             fi
         fi
     done
-    echo
+    echo # new line at the end for better readability
 }
 
 function list { # argumentless function
