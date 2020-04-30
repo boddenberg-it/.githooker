@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 b="\x1B[1m"  # bold
 u="\x1B[0m"  # unbold
@@ -21,5 +21,3 @@ function run_command_once {
 }
 
 echo -e "\n${b}[.githooker] $1 ${u}hook fired"
-
-ln -s -f ../../.githooks/pre-commit.sh .git/hooks/pre-commit
