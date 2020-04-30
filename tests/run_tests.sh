@@ -2,6 +2,7 @@
 BASE="$(git rev-parse --show-toplevel)"
 
 # Tips for debugging: simply search for it and remove "> /dev/null" from its 'actual command(s)'
+# output from stderr may appear within successfully test cases.
 
 # check whether tests are invoked in .githooker and not in repo which is using it as a subomdule!
 if [ "$(basename "$BASE")" != "githooks" ]; then

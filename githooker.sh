@@ -77,10 +77,10 @@ function enable {
 }
 
 #
-function generic_interactive {
-    read -r answer
-    if [ "$answer" = "y" ] || [ "$answer" = "yes" ]; then
-        $1 "$2" "$3" "$4"
+function awnser {
+    read -r user_answer
+    if [ "$user_answer" = "y" ] || [ "$user_answer" = "yes" ]; then
+        echo "yes"
     fi
 }
 
@@ -93,10 +93,14 @@ function interactive { # argumentless function
 
         if [ -f "$BASE/.git/hooks/$hook_without_extension" ]; then
             echo -e "\n\t${g}${b}$hook_without_extension${u} hook is enabled${d}. Do you want to ${b}disable${u} it? (y/N)"
-            generic_interactive helper_disable "$(basename $hook)"
+            if [ "$(awnser)" = "yes" ]; then
+                helper_disable "$(basename $hook)"
+            fi
         else
             echo -e "\n\t${y}${b}$hook_without_extension${u} hook is disabled${d}. Do you want to ${b}enable${u} it? (y/N)"
-            generic_interactive enable "$hook" " " " "
+            if [ "$(awnser)" = "yes" ]; then
+                enable "$hook" " " " "
+            fi
         fi
     done
 
@@ -111,7 +115,9 @@ function interactive { # argumentless function
         
         if [ -z $acutal_hook ] || [ ! -f $acutal_hook ]; then
             echo -e "\n\t${r}$(basename $hook) hook is orphaned.$u Do you want to ${b}delete$u it? (y/N)${d}"
-            generic_interactive helper_disable "$(basename $hook)" "foo" "${r}deleted${d}"
+            if [ "$(awnser)" = "yes" ]; then
+                answer helper_disable "$(basename $hook)" "foo" "${r}deleted${d}"
+            fi
         fi
     done
     echo
