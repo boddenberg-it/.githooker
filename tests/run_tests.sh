@@ -83,19 +83,19 @@ git checkout testing_branch > /dev/null
 
 echo -e "\n${b}######${u} starting .githooker test suites ${b}######${u}\n"
 
-echo -e "\n${b}TESTS OF: .githooker/generic_hooks.sh$u"
+echo -e "${b}TESTS OF: .githooker/generic_hooks.sh$u"
 
 source "$BASE/tests/test_generic_hooks.sh"
 
-echo -e "\n${b}TESTS OF: .githooker/do$u"
+echo -e "\n${b}TESTS OF: .githooker/* commands$u"
 
-source "$BASE/tests/test_list.sh"
+source "$BASE/tests/list_test.sh"
 
-source "$BASE/tests/test_enable.sh"
+source "$BASE/tests/enable_test.sh"
 
-source "$BASE/tests/test_disable.sh"
+source "$BASE/tests/disable_test.sh"
 
-source "$BASE/tests/test_interactive.sh"
+source "$BASE/tests/interactive_test.sh"
 
 # clean up
 rm "$BASE/foo.check" "$BASE/bar.check" "$BASE/githooks/pre-commit" \
