@@ -1,12 +1,12 @@
-    # check if expect is available)
+# check if expect is available)
 expect -v > /dev/null
 if [ $? -gt 0 ]; then
 	echo -e "${r}[WARNING]$u No expect installation found skipping interactive tests..."
 else
 	ensure_clean_test_setup "interactive"
-	create_hook pre-commit 0
-	create_hook pre-push 2
-	create_hook pre-rebase 1
+	orphaned_hook pre-commit
+	enabled_hook pre-push
+	disabled_hook pre-rebase
 	
     start="$(date +%s)"
 	expect "$BASE/tests/test_interactive.exp" "n" > /dev/null
@@ -22,6 +22,7 @@ else
     start="$(date +%s)"
 	expect "$BASE/tests/test_interactive.exp" "y" > /dev/null
 	end="$(date +%s)"
+
 	# check for timeout
 	if [ $((end-start)) = 30 ]; then
 		success "${r}${b}[TIMEOUT]${d} ${u}interactive - answer yes to all"

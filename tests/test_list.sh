@@ -1,8 +1,8 @@
 ensure_clean_test_setup "list"
 
-create_hook pre-commit 0
-create_hook pre-push 1
-create_hook pre-rebase 2
+orphaned_hook pre-commit
+disabled_hook pre-push
+enabled_hook pre-rebase
 
 log="$BASE/tests/list.output"
 list > "$log"

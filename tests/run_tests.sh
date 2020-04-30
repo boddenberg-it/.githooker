@@ -23,6 +23,18 @@ function failure {
 	final_test_result="1"
 }
 
+function orphaned_hook {
+	ln -s "$BASE/githooks/$1.ext" "$BASE/.git/hooks/$1"
+}
+
+function disabled_hook {
+	echo "$1" > "$BASE/githooks/$1.ext"
+}
+
+function enabled_hook {
+	echo "$1" > "$BASE/githooks/$1.ext"
+	ln -s "$BASE/githooks/$1.ext" "$BASE/.git/hooks/$1"
+}
 function create_hook {
 	# $1:
 	#	- hook e.g. 'pre-commit', 'post-merge'
@@ -70,6 +82,8 @@ git branch testing_branch > /dev/null
 git checkout testing_branch > /dev/null
 
 echo -e "\n${b}######${u} starting .githooker test suites ${b}######${u}\n"
+
+echo -e "\n${b}TESTS OF: .githooker/generic_hooks.sh$u"
 
 source "$BASE/tests/test_generic_hooks.sh"
 

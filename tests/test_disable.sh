@@ -1,6 +1,6 @@
 
 ensure_clean_test_setup "disable one hook"
-create_hook pre-commit 2
+enabled_hook pre-commit
 
 disable "pre-commit" > /dev/null
 
@@ -11,7 +11,7 @@ else
 fi
 
 ensure_clean_test_setup "disable one hook"
-create_hook pre-commit 0
+orphaned_hook pre-commit
 
 disable "pre-commit" > /dev/null
 
@@ -22,9 +22,9 @@ else
 fi
 
 ensure_clean_test_setup "disable three hooks"
-create_hook pre-commit 2
-create_hook pre-push 2
-create_hook pre-rebase 2
+enabled_hook pre-commit
+enabled_hook pre-push
+enabled_hook pre-rebase
 
 disable "pre-commit" "pre-push" "pre-rebase" > /dev/null 2>&1
 
@@ -35,9 +35,9 @@ else
 fi
 
 ensure_clean_test_setup "disable --all hooks"
-create_hook pre-commit 2
-create_hook pre-push 2
-create_hook pre-rebase 2
+enabled_hook pre-commit
+enabled_hook pre-push
+enabled_hook pre-rebase
 
 disable --all > /dev/null 2>&1
 

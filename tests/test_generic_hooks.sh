@@ -1,5 +1,4 @@
-echo -e "\n${b}TESTS OF: .githooker/generic_hooks.sh$u"
-
+# create githook script with actual content
 cat << EOF > "$BASE/githooks/pre-commit.sh"
 #!/bin/bash
 source "./generic_hooks.sh"
@@ -15,7 +14,6 @@ run_command_once "*.nope,*.check" "touch test_only_once_multiple_regex"
 EOF
 chmod 755 "$BASE/githooks/pre-commit.sh"
 
-# actual commands
 enable pre-commit > /dev/null
 
 # trigger hook by creating commit
@@ -24,7 +22,6 @@ git add foo.check foobar.one
 rm foo.check foobar.one test_only_once_single_regex test_only_once_multiple_regex 2> /dev/null
 git commit -m "foo" > /dev/null
 
-# evaluations
 if [ -f "$BASE/foo.check" ] && [ -f "$BASE/foobar.one" ]; then
 	success "run_command_for_each_file - one regex passed"
 else
