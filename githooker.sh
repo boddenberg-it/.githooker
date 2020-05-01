@@ -19,13 +19,16 @@ cc="$d"      # current color
 function actual_enable {
     hook="$1"
 
-    # get hook extension
+    # get hook extension if missing
+    # if so, we get the hook_dir too
     if [[ $1 != *"."* ]]; then  
-       hook="$(find "$BASE/$hook_dir" -name "$1.*")"
+        hook="$(find "$hook_dir" -name "$1.*")"
+    else
+        # so we add it here
+        hook="$hook_dir/$hook"
     fi
-    # "../.." is necessary because git hooks spawn in .git/hooks/
-    ln -s -f ../../"$hook_dir/$hook" ".git/hooks/$2"
-
+    ln -s -f ../../"$hook" ".git/hooks/$2"
+    # Note: "../.." is necessary because git hooks spawn in .git/hooks
     echo -e "\t$b$1$u hook ${g}enabled${d}"
 }
 

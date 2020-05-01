@@ -3,13 +3,13 @@ cat << EOF > "$BASE/$hook_dir/pre-commit.sh"
 #!/bin/bash
 source "./generic_hooks.sh"
 
-run_command_for_each_file "*.check" "touch"
+run_command_for_each_file ".check" "touch"
 
-run_command_for_each_file "*.foo,*.one" "touch"
+run_command_for_each_file ".foo,.one" "touch"
 
-run_command_once "*.check" "touch test_only_once_single_regex"
+run_command_once ".check" "touch test_only_once_single_regex"
 
-run_command_once "*.nope,*.check" "touch test_only_once_multiple_regex"
+run_command_once ".nope,.check" "touch test_only_once_multiple_regex"
 
 EOF
 chmod 755 "$BASE/$hook_dir/pre-commit.sh"
