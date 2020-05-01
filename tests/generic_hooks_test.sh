@@ -1,7 +1,7 @@
 # create githook script with actual content
 cat << EOF > "$BASE/$hook_dir/pre-commit.sh"
 #!/bin/bash
-source "./generic_hooks.sh"
+source "./generic_hooks.sh" "pre-commit"
 
 run_command_for_each_file ".check" "touch"
 
@@ -20,8 +20,29 @@ enable pre-commit > /dev/null
 touch foo.check foobar.one
 git add foo.check foobar.one
 rm foo.check foobar.one test_only_once_single_regex test_only_once_multiple_regex 2> /dev/null
-git commit -m "foo" > /dev/null
 
+# hook-notification test via expect
+expect -v > /dev/null
+if [ $? -gt 0 ]; then
+	echo -e "${r}[WARNING]$u No expect installation found skipping hook-notification test..."
+else
+
+	expect "$BASE/tests/notification_test.exp" "y" > /dev/null 2&>1
+
+	if [ $? = 0 ]; then
+		success "hook notification has ben printed to the terminal"
+	else
+		failure "hook notification has ben printed to the terminal"
+	fi
+fi
+
+# to another commit to not rely on hook notification test
+echo "foobar one" > foobar.one
+echo "check one" > foo.check
+git add foo.check foobar.one
+git commit -m "commit for unit tests" > /dev/null
+
+# non expect-related tests
 if [ -f "$BASE/foo.check" ] && [ -f "$BASE/foobar.one" ]; then
 	success "run_command_for_each_file - one regex passed"
 else

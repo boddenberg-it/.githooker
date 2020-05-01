@@ -24,4 +24,4 @@ function run_command_once {
 	done
 }
 
-echo -e "\n${b}[.githooker] $1 ${u}hook fired"
+echo -e "${b}[.githooker] $1 ${u}hook fired${b}!${u}"
