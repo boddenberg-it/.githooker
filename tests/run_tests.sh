@@ -71,7 +71,6 @@ fi
 
 # check whether we're called from .githooker or super project
 BASE="$(git rev-parse --show-toplevel)"
-echo "git project: $BASE"
 
 if [[ "$BASE" != *".githooker" ]]; then
 	cd .githooker
@@ -82,9 +81,12 @@ fi
 source "$BASE/githooker.sh"
 
 # one may run tests before creating .githooks
-mkdir $hook_dir || true
+mkdir -p $hook_dir
 
 final_test_result=0
+
+echo -e "#############################################"
+echo -e "######${b} starting .githooker test suites ${u}######\n"
 
 # switch_to_branch to not break local development
 # TODO: needs stashing for local development only
@@ -93,9 +95,7 @@ git branch -D testing_branch > /dev/null 2>&1
 git branch testing_branch > /dev/null
 git checkout testing_branch > /dev/null
 
-echo -e "\n${b}######${u} starting .githooker test suites ${b}######${u}\n"
-
-echo -e "${b}TESTS FOR: .githooker/generic_hooks.sh$u"
+echo -e "\n${b}TESTS FOR: .githooker/generic_hooks.sh$u"
 
 source "$BASE/tests/generic_hooks_test.sh"
 
