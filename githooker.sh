@@ -23,9 +23,8 @@ function actual_enable {
     if [[ $1 != *"."* ]]; then  
        hook="$(find "$BASE/$hook_dir" -name "$1.*")"
     fi
-
     # "../.." is necessary because git hooks spawn in .git/hooks/
-    ln -s -f "../../$hook_dir/$hook" "$BASE/.git/hooks/$2"
+    ln -s -f ../../"$hook_dir/$hook" ".git/hooks/$2"
 
     echo -e "\t$b$1$u hook ${g}enabled${d}"
 }
@@ -36,8 +35,8 @@ function actual_disable {
     if [[ $1 = *"."* ]]; then
         hook="$(basename $1 | cut -d "." -f1)"
     fi
-    
-    rm "$BASE/.git/hooks/$hook" 2> /dev/null
+    echo "$BASE/.git/hooks/$hook"
+    unlink "$BASE/.git/hooks/$hook" #> /dev/null
 
     if [ -n "$3" ]; then
         # orphaned hook links are deleted not disabled!
