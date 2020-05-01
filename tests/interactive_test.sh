@@ -7,11 +7,11 @@ else
 	orphaned_hook pre-commit
 	enabled_hook pre-push
 	disabled_hook pre-rebase
-	
+
     start="$(date +%s)"
 	expect "$BASE/tests/interactive.exp" "n" > /dev/null
 	end="$(date +%s)"
-	
+
     # evaluation (based on time out)
 	if [ $((end-start)) -lt 15 ]; then
 		success "interactive - smoke test (always no)"
@@ -28,19 +28,19 @@ else
 		success "${r}${b}[TIMEOUT]${d} ${u}interactive - answer yes to all"
 	fi
 	# check if orphaned pre-commit is deleted
-	if [ ! -f "$BASE/.git/hooks/pre-commit" ]; then
+	if [ ! -L "$BASE/.git/hooks/pre-commit" ]; then
 		success "interactive - delete orphaned hook"
 	else
 		failure "interactive - delete orphaned hook"
 	fi
 	# check it pre-push is disabled
-	if [ ! -f "$BASE/.git/hooks/pre-push" ]; then
+	if [ ! -L "$BASE/.git/hooks/pre-push" ]; then
 		success "interactive - disable enabled hook"
 	else
 		failure "interactive - disable enabled hook"
 	fi
 	# check if pre-rebase is enabled
-	if [ -f "$BASE/.git/hooks/pre-rebase" ]; then
+	if [ -L "$BASE/.git/hooks/pre-rebase" ]; then
 		success "interactive - enable disabled hook"
 	else
 		failure "interactive - enable disabled hook"
