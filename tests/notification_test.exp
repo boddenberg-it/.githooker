@@ -1,0 +1,10 @@
+#!/usr/bin/expect -f
+
+set timeout 1
+
+spawn git commit -m "let's see whether we get notified about hook firing up."
+
+expect {
+    "hook fired" {exit 0}
+    "testing_banch" {exit 1}
+}
