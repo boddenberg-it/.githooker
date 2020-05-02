@@ -1,21 +1,3 @@
-ensure_clean_test_setup "enable --all hooks"
-disabled_hook pre-commit
-disabled_hook pre-push
-
-enable ".githook/pre-commit.sh" "pre-push.sh" > /dev/null
-
-if [ -L "$BASE/.git/hooks/pre-commit" ]; then
-	success "${b}EN/DISable:${u} passing path to hook script"
-else
-	failure "${b}EN/DISable:${u} passing path to hook script"
-fi
-
-if [  -L "$BASE/.git/hooks/pre-push" ]; then
-	success "${b}EN/DISable:${u} passing hook with extension"
-else
-	failure  "${b}EN/DISable:${u} passing hook with extension"
-fi
-
 ensure_clean_test_setup "enable one hook"
 disabled_hook pre-commit
 

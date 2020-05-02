@@ -105,6 +105,8 @@ source "$BASE/tests/enable_test.sh"
 
 source "$BASE/tests/disable_test.sh"
 
+source "$BASE/tests/en_disable_test.sh"
+
 source "$BASE/tests/interactive_test.sh"
 
 # clean up

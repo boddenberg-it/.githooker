@@ -68,18 +68,6 @@ git add foo.check foobar.one
 git commit -m "commit for unit tests" > /dev/null
 
 # non expect-related tests
-if [ -f "$BASE/foo.check" ] && [ -f "$BASE/foobar.one" ]; then
-	success "run_command_for_each_file - one regex passed"
-else
-	failure "run_command_for_each_file - one regex passed"
-fi
-
-if [ -f "$BASE/foobar.one" ]; then
-	success "run_command_for_each_file - multiple regex passed"
-else
-	failure "run_command_for_each_file - mutliple regex passed"
-fi
-
 if [ -f "$BASE/test_only_once_single_regex" ]; then
 	success "run_command_once - one regex passed"
 else
@@ -90,4 +78,16 @@ if [ -f "$BASE/test_only_once_multiple_regex" ]; then
 	success "run_command_once - mutliple regex passed"
 else
 	failure "run_command_once - multiple regex passed"
+fi
+
+if [ -f "$BASE/foo.check" ] && [ -f "$BASE/foobar.one" ]; then
+	success "run_command_for_each_file - one regex passed"
+else
+	failure "run_command_for_each_file - one regex passed"
+fi
+
+if [ -f "$BASE/foobar.one" ]; then
+	success "run_command_for_each_file - multiple regex passed"
+else
+	failure "run_command_for_each_file - mutliple regex passed"
 fi
