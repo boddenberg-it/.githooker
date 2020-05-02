@@ -2,7 +2,7 @@
 
 set timeout 1
 
-spawn git commit -m "hook notification test" > /dev/null
+spawn git commit -m "let's see whether we get notified about hook firing up." > /dev/null
 
 expect {
     "hook fired" {exit 0}

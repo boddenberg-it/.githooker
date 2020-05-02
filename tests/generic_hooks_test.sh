@@ -1,3 +1,28 @@
+echo -e "\n${b}TESTS FOR: hooks in general$u"
+
+# create githook script with failing content
+cat << EOF > "$BASE/$hook_dir/pre-commit.sh"
+#!/bin/bash -e
+source "./generic_hooks.sh" "pre-commit"
+
+run_command_for_each_file ".test" "mkdir"
+
+EOF
+chmod 755 "$BASE/$hook_dir/pre-commit.sh"
+
+# create commit which triggers failing hook
+echo "foo" > foo.test
+echo "foo" > bar.test
+git add foo.test bar.test
+git commit -m "let the fail begin" > /dev/null 2&>1
+
+# check if hook did block the commit
+if [[ "$(git log -n1 | tail -n1)" != *"let the fail begin"* ]]; then
+	success "does a failing hook block the commit?"
+else
+	failure "does a failing hook block the commit?"
+fi
+
 # create githook script with actual content
 cat << EOF > "$BASE/$hook_dir/pre-commit.sh"
 #!/bin/bash
@@ -12,7 +37,6 @@ run_command_once ".check" "touch test_only_once_single_regex"
 run_command_once ".nope,.check" "touch test_only_once_multiple_regex"
 
 EOF
-chmod 755 "$BASE/$hook_dir/pre-commit.sh"
 
 enable pre-commit > /dev/null
 
@@ -27,15 +51,16 @@ if [ $? -gt 0 ]; then
 	echo -e "${r}[WARNING]$u No expect installation found skipping hook-notification test..."
 else
 
-	expect "$BASE/tests/notification_test.exp" "y" > /dev/null 2&>1
+	expect "$BASE/tests/notification_test.exp" "y" > /dev/null
 
 	if [ $? = 0 ]; then
-		success "hook notification has ben printed to the terminal"
+		success "has hook notification been printed?"
 	else
-		failure "hook notification has ben printed to the terminal"
+		failure "has hook notification been printed?"
 	fi
 fi
 
+echo -e "\n${b}TESTS FOR: .githooker/generic_hooks.sh$u"
 # to another commit to not rely on hook notification test
 echo "foobar one" > foobar.one
 echo "check one" > foo.check

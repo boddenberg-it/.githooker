@@ -95,8 +95,6 @@ git branch -D testing_branch > /dev/null 2>&1
 git branch testing_branch > /dev/null
 git checkout testing_branch > /dev/null
 
-echo -e "\n${b}TESTS FOR: .githooker/generic_hooks.sh$u"
-
 source "$BASE/tests/generic_hooks_test.sh"
 
 echo -e "\n${b}TESTS FOR: .githooker/* commands$u"
