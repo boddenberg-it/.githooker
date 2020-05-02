@@ -1,10 +1,7 @@
 FROM centos:latest
 
 RUN yum -y update && yum -y install git expect
-# some distros do not seem to like github certs
-RUN git config --global http.sslVerify false ;\
-    git config --global user.email "githooker@boddenberg.it" ;\
-    git config --global user.name "githooker" ;\
-    git clone https://github.com/boddenberg-it/.githooker.git ;\
-    cd .githooker ;\
-    ./tests/run_tests.sh
+
+COPY ./tests/_docker/run_githooker_testsuites.sh run_githooker_testsuites.sh
+
+RUN ./run_githooker_testsuites.sh
