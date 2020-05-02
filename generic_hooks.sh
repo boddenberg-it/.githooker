@@ -15,6 +15,7 @@ function run_command_once {
 	for changed_file in $(git diff HEAD --name-only --cached); do
 		if [ $(echo "$changed_file" | grep -c -e "${1//\,/\\|}") = 1 ]; then
 			$2
+			break
 		fi
 	done
 }
