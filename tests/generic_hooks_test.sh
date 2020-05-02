@@ -34,6 +34,8 @@ run_command_for_each_file ".foo,.one" "touch"
 
 run_command_once ".check" "touch test_only_once_single_regex"
 
+run_command_once ".check" "$BASE/tests/_counter_for_run_once_test.sh"
+
 run_command_once ".nope,.check" "touch test_only_once_multiple_regex"
 
 EOF
@@ -61,13 +63,22 @@ else
 fi
 
 echo -e "\n${b}TESTSUITE .githooker/generic_hooks.sh$u"
+# pre-cleanup
+rm run_once 2> /dev/null
 # to another commit to not rely on hook notification test
 echo "foobar one" > foobar.one
 echo "check one" > foo.check
-git add foo.check foobar.one
+touch bar.check
+git add foo.check bar.check foobar.one
 git commit -m "commit for unit tests" > /dev/null
 
 # non expect-related tests
+if [[ "$(cat run_once | wc -l)" = *"1"* ]]; then
+	success "run_command_once - runs once"
+else
+	failure "run_command_once - runs once"
+fi
+
 if [ -f "$BASE/test_only_once_single_regex" ]; then
 	success "run_command_once - one regex passed"
 else
@@ -78,6 +89,12 @@ if [ -f "$BASE/test_only_once_multiple_regex" ]; then
 	success "run_command_once - mutliple regex passed"
 else
 	failure "run_command_once - multiple regex passed"
+fi
+
+if [ -f "$BASE/foo.check" ] && [ -f "$BASE/bar.check" ]; then
+	success "run_command_for_each_file - runs for each file"
+else
+	failure "run_command_for_each_file - runs for each file"
 fi
 
 if [ -f "$BASE/foo.check" ] && [ -f "$BASE/foobar.one" ]; then
@@ -91,3 +108,6 @@ if [ -f "$BASE/foobar.one" ]; then
 else
 	failure "run_command_for_each_file - mutliple regex passed"
 fi
+
+# clean up
+rm foo.check foobar.one test_only_once_single_regex test_only_once_multiple_regex 2> /dev/null
