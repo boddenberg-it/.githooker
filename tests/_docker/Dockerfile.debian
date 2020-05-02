@@ -7,6 +7,5 @@ RUN git config --global http.sslVerify false ;\
     git config --global user.email "githooker@boddenberg.it" ;\
     git config --global user.name "githooker" ;\
     git clone https://github.com/boddenberg-it/.githooker.git ;\
-    mkdir .githooker/githooks ;\
     cd .githooker ;\
     ./tests/run_tests.sh
