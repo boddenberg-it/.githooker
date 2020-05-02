@@ -1,4 +1,4 @@
-echo -e "\n${b}TESTS FOR: hooks in general$u"
+echo -e "\n${b}TESTSUITE general hook tests$u"
 
 # create githook script with failing content
 cat << EOF > "$BASE/$hook_dir/pre-commit.sh"
@@ -60,7 +60,7 @@ else
 	fi
 fi
 
-echo -e "\n${b}TESTS FOR: .githooker/generic_hooks.sh$u"
+echo -e "\n${b}TESTSUITE .githooker/generic_hooks.sh$u"
 # to another commit to not rely on hook notification test
 echo "foobar one" > foobar.one
 echo "check one" > foo.check

@@ -97,7 +97,7 @@ git checkout testing_branch > /dev/null
 
 source "$BASE/tests/generic_hooks_test.sh"
 
-echo -e "\n${b}TESTS FOR: .githooker/* commands$u"
+echo -e "\n${b}TESTSUITE .githooker/* commands$u"
 
 source "$BASE/tests/list_test.sh"
 
