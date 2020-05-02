@@ -7,4 +7,4 @@ run_command_for_each_file ".sh" "shellcheck  -e SC2154 -e SC1090 -e SC2181 -e SC
 
 run_command_once ".sh,.exp" "./tests/run_tests.sh"
 
-exit $exit_code
+run_command_once "test_dockerfiles.sh" "./tests/test_dockerfiles.sh"
