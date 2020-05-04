@@ -7,7 +7,7 @@ function ensure_clean_test_setup {
 	rm -f "$BASE"/$hook_dir/*
 
 	# clean up all symbolic links
-	for hook in "$BASE"/.git/hooks/*; do
+	for hook in "$BASE"/$GIT_HOOK_DIR/*; do
 		if [[ "$hook" != *".sample" ]]; then
 			rm -f "$hook"
 		fi
@@ -24,7 +24,7 @@ function failure {
 }
 
 function orphaned_hook {
-	ln -s "$BASE/$hook_dir/$1.ext" "$BASE/.git/hooks/$1"
+	ln -s "$BASE/$hook_dir/$1.ext" "$BASE/$GIT_HOOK_DIR/$1"
 }
 
 function disabled_hook {
@@ -33,55 +33,30 @@ function disabled_hook {
 
 function enabled_hook {
 	echo "$1" > "$BASE/$hook_dir/$1.ext"
-	ln -s "$BASE/$hook_dir/$1.ext" "$BASE/.git/hooks/$1"
+	ln -s "$BASE/$hook_dir/$1.ext" "$BASE/$GIT_HOOK_DIR/$1"
 }
-function create_hook {
-	# $1:
-	#	- hook e.g. 'pre-commit', 'post-merge'
-	# $2: 
-	#	- 0 symbolic link in .git/hooks/ (orphaned)
-	#	- 1 creates hook in $hook_dir/ (disabled)
-	#	- * creates both of the above (enabled)
-	
-	hook="$BASE/$hook_dir/$1.ext"
-	link="$BASE/.git/hooks/$1"
-	
-	echo "$1" > "$hook"
-	ln -s "$hook" "$link"
-	
-	if [ "$2" = "0" ]; then
-		rm "$hook"
-	elif [ "$2" = "1" ]; then
-		rm "$link"
-	fi
-}
-
-# check whether tests are invoked in .githooker and not in repo which is using it as a subomdule!
-if [ "$(basename "$BASE")" != "$hook_dir" ]; then
-
-	# two checks to allow calling .githooker from super project, if not do not prompt anything.
-	cd "$BASE/.githooker" 2> /dev/null || true
-	BASE="$(git rev-parse --show-toplevel)"
-
-	if [ "$(basename "$BASE")" != ".githooker" ]; then
-		echo -e "\n[WARNING] calling .githooker tests on a different repo ($(basename "$BASE"))... aborting!\n"
-		exit 1
-	fi
-fi
 
 # check whether we're called from .githooker or super project
 BASE="$(git rev-parse --show-toplevel)"
+TEST_BASE="$BASE"
 
 if [[ "$BASE" != *".githooker" ]]; then
-	cd .githooker
-	BASE="$(git rev-parse --show-toplevel)"
+	TEST_BASE="$BASE/.githooker"
 fi
 
 # sourcing script under test for direct invokations
-source "$BASE/githooker.sh"
+source "$TEST_BASE/githooker.sh"
+
+# this allows calling githooker suites within submodule from super project
+# issue: a submodule does not have a .git/hooks dir. ".git" is a file in such case.
+if [[ ! -d "$BASE/.git/" ]]; then
+	echo "fired"
+	GIT_HOOK_DIR=".git_hooks_for_testing_githooker_in_own_git_repo_as_submodule"
+	hook_dir=".githooker/$hook_dir"
+fi
 
 # one may run tests before creating .githooks
-mkdir -p $hook_dir
+mkdir -p "$hook_dir" "$GIT_HOOK_DIR"
 
 final_test_result=0
 
@@ -91,23 +66,26 @@ echo -e "######${b} starting .githooker test suites ${u}######\n"
 # switch_to_branch to not break local development
 # TODO: needs stashing for local development only
 current_branch="$(git branch --format='%(refname:short)' | head -n1)"
-git branch -D testing_branch > /dev/null 2>&1
-git branch testing_branch > /dev/null
-git checkout testing_branch > /dev/null
+git branch -D githooker_testing_branch > /dev/null 2>&1
+git branch githooker_testing_branch > /dev/null
+git checkout githooker_testing_branch > /dev/null
 
-source "$BASE/tests/generic_hooks_test.sh"
+# check whether we're called within a git submodule
+if [[ -d "$BASE/.git/" ]]; then
+	source "$TEST_BASE/tests/generic_hooks_test.sh"
+fi
 
 echo -e "\n${b}TESTSUITE .githooker/* commands$u"
 
-source "$BASE/tests/list_test.sh"
+source "$TEST_BASE/tests/list_test.sh"
 
-source "$BASE/tests/enable_test.sh"
+source "$TEST_BASE/tests/enable_test.sh"
 
-source "$BASE/tests/disable_test.sh"
+source "$TEST_BASE/tests/disable_test.sh"
 
-source "$BASE/tests/en_disable_test.sh"
+source "$TEST_BASE/tests/en_disable_test.sh"
 
-source "$BASE/tests/interactive_test.sh"
+source "$TEST_BASE/tests/interactive_test.sh"
 
 # clean up
 rm "$BASE/foo.check" "$BASE/bar.check" "$BASE/$hook_dir/pre-commit" \
@@ -116,6 +94,6 @@ rm "$BASE/foo.check" "$BASE/bar.check" "$BASE/$hook_dir/pre-commit" \
 ensure_clean_test_setup
 echo
 git checkout "$current_branch" > /dev/null
-git branch -D testing_branch > /dev/null 2>&1
+git branch -D githooker_testing_branch > /dev/null 2>&1
 echo
 exit $final_test_result

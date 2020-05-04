@@ -1,3 +1,11 @@
 #!/bin/bash
 
-"$(git rev-parse --show-toplevel)"/.githooker/tests/run_tests.sh
+echo -e "\nDo you really want to run .githooker test suite within super project?\n"
+echo -e "It's highly recommended to have no staged files in current branch."
+echo -e "\nType \"yes\" if you want to continue - you have been warned!\n"
+
+read -r answer
+
+if [ "$answer" = "yes" ]; then
+    .githooker/tests/run_tests.sh
+fi
