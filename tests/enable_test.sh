@@ -1,3 +1,4 @@
+##########################################
 ensure_clean_test_setup "enable one hook"
 disabled_hook pre-commit
 
@@ -9,6 +10,7 @@ else
 	failure "enable - one hook"
 fi
 
+##########################################
 ensure_clean_test_setup "enable three hooks"
 disabled_hook pre-commit
 disabled_hook pre-push
@@ -22,6 +24,7 @@ else
 	failure "enable - three hooks"
 fi
 
+##########################################
 ensure_clean_test_setup "enable --all hooks"
 disabled_hook pre-commit
 disabled_hook pre-push

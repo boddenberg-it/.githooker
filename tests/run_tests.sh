@@ -1,7 +1,8 @@
 #!/bin/bash 
 # Tips for debugging: simply search for it and remove "> /dev/null" from its 'actual command(s)'
-# output from stderr may appear within successfully test cases.
+# output from stderr may appear within successfully test cases though.
 
+# shared functions across all *_test scripts
 function ensure_clean_test_setup {
 	# clean up actual hooks
 	rm -f "$BASE/$hook_dir/"*
@@ -23,6 +24,7 @@ function failure {
 	final_test_result="1"
 }
 
+# to easily create hooks for testing
 function orphaned_hook {
 	ln -s "$BASE/$hook_dir/$1.ext" "$BASE/$GIT_HOOK_DIR/$1"
 }
@@ -35,6 +37,7 @@ function enabled_hook {
 	echo "$1" > "$BASE/$hook_dir/$1.ext"
 	ln -s "$BASE/$hook_dir/$1.ext" "$BASE/$GIT_HOOK_DIR/$1"
 }
+###########################################################
 
 # check whether we're called from .githooker or super project
 BASE="$(git rev-parse --show-toplevel)"
@@ -47,33 +50,19 @@ fi
 # sourcing script under test for direct invokations
 source "$TEST_BASE/githooker.sh"
 
-# this allows calling githooker suites within submodule from super project
-# issue: a submodule does not have a .git/hooks dir. ".git" is a file in such case.
-if [[ ! -d "$BASE/.git/" ]]; then
-	echo "fired"
-	GIT_HOOK_DIR=".git_hooks_for_testing_githooker_in_own_git_repo_as_submodule"
-	hook_dir=".githooker/$hook_dir"
-fi
-
 # one may run tests before creating .githooks
-mkdir -p "$hook_dir" "$GIT_HOOK_DIR"
-
-final_test_result=0
+mkdir -p "$hook_dir"
 
 echo -e "#############################################"
 echo -e "######${b} starting .githooker test suites ${u}######\n"
 
 # switch_to_branch to not break local development
-# TODO: needs stashing for local development only
 current_branch="$(git rev-parse --abbrev-ref HEAD)"
 git branch -D githooker_testing_branch > /dev/null 2>&1
 git branch githooker_testing_branch > /dev/null
 git checkout githooker_testing_branch > /dev/null
 
-# check whether we're called within a git submodule
-if [[ -d "$BASE/.git/" ]]; then
-	source "$TEST_BASE/tests/generic_hooks_test.sh"
-fi
+source "$TEST_BASE/tests/generic_hooks_test.sh"
 
 echo -e "\n${b}TESTSUITE .githooker/* commands$u"
 

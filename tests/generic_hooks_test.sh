@@ -1,5 +1,6 @@
 echo -e "\n${b}TESTSUITE general hook tests$u"
 
+##########################################
 # create githook script with failing content
 cat << EOF > "$BASE/$hook_dir/pre-commit.sh"
 #!/bin/bash -e
@@ -25,6 +26,7 @@ else
 	failure "does a failing hook block the commit?"
 fi
 
+##########################################
 # create githook script with actual content
 cat << EOF > "$BASE/$hook_dir/pre-commit.sh"
 #!/bin/bash
@@ -62,9 +64,11 @@ else
 	fi
 fi
 
+##########################################
 echo -e "\n${b}TESTSUITE .githooker/generic_hooks.sh$u"
-# pre-cleanup
-rm run_once 2> /dev/null
+
+rm run_once 2> /dev/null # ensure run_once does not exist already
+
 # to another commit to not rely on hook notification test
 echo "foobar one" > foobar.one
 echo "check one" > foo.check
@@ -110,4 +114,4 @@ else
 fi
 
 # clean up
-rm foo.check foobar.one test_only_once_single_regex test_only_once_multiple_regex 2> /dev/null
+rm foo.check foobar.one test_only_once_single_regex test_only_once_multiple_regex run_once 2> /dev/null

@@ -1,4 +1,4 @@
-ensure_clean_test_setup "enable --all hooks"
+ensure_clean_test_setup "passing path to hook script"
 disabled_hook pre-commit
 disabled_hook pre-push
 

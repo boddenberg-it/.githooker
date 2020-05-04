@@ -1,4 +1,4 @@
-
+##########################################
 ensure_clean_test_setup "disable one hook"
 enabled_hook pre-commit
 
@@ -10,6 +10,7 @@ else
 	success "disable - one hook"
 fi
 
+##########################################
 ensure_clean_test_setup "disable one hook"
 orphaned_hook pre-commit
 
@@ -21,6 +22,7 @@ else
 	failure "disable - orhaned hook"
 fi
 
+##########################################
 ensure_clean_test_setup "disable three hooks"
 enabled_hook pre-commit
 enabled_hook pre-push
@@ -34,6 +36,7 @@ else
 	success "disable - three hooks"
 fi
 
+##########################################
 ensure_clean_test_setup "disable --all hooks"
 enabled_hook pre-commit
 enabled_hook pre-push
