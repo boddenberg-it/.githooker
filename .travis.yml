@@ -9,9 +9,4 @@ env:
 - distro=debian
 - distro=ubuntu
 
-script:
-  - >
-    set -ex;
-    git config --global user.name "githooker";
-    git config --global user.email "githooker@boddenberg.it";
-    docker build -f "$PWD/tests/_docker/Dockerfile.$distro" .
+script: docker build -f "$PWD/tests/_docker/Dockerfile.$distro" .
