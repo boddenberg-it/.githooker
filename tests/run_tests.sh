@@ -4,10 +4,10 @@
 
 function ensure_clean_test_setup {
 	# clean up actual hooks
-	rm -f "$BASE"/$hook_dir/*
+	rm -f "$BASE/$hook_dir/"*
 
 	# clean up all symbolic links
-	for hook in "$BASE"/$GIT_HOOK_DIR/*; do
+	for hook in "$BASE/$GIT_HOOK_DIR"/*; do
 		if [[ "$hook" != *".sample" ]]; then
 			rm -f "$hook"
 		fi

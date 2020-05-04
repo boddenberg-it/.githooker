@@ -1,8 +1,6 @@
 echo -e "\n${b}TESTSUITE general hook tests$u"
 
 # create githook script with failing content
-echo $"$BASE/$hook_dir/pre-commit.sh"
-
 cat << EOF > "$BASE/$hook_dir/pre-commit.sh"
 #!/bin/bash -e
 source "$TEST_BASE/generic_hooks.sh" "pre-commit"
@@ -12,11 +10,13 @@ run_command_for_each_file ".test" "mkdir"
 EOF
 chmod 755 "$BASE/$hook_dir/pre-commit.sh"
 
+enable pre-commit > /dev/null
+
 # create commit which triggers failing hook
 echo "foo" > foo.test
 echo "foo" > bar.test
 git add foo.test bar.test
-git commit -m "let the fail begin" > /dev/null 2&>1
+git commit -m "let the fail begin" > /dev/null
 
 # check if hook did block the commit
 if [[ "$(git log -n1 | tail -n1)" != *"let the fail begin"* ]]; then
@@ -41,8 +41,6 @@ run_command_once ".check" "$TEST_BASE/tests/_counter_for_run_once_test.sh"
 run_command_once ".nope,.check" "touch test_only_once_multiple_regex"
 
 EOF
-
-enable pre-commit > /dev/null
 
 # trigger hook by creating commit
 touch foo.check foobar.one
@@ -75,7 +73,7 @@ git add foo.check bar.check foobar.one
 git commit -m "commit for unit tests" > /dev/null
 
 # non expect-related tests
-if [[ "$(cat run_once | wc -l)" = *"1"* ]]; then
+if [[ "$(wc -l < run_once)" = *"1"* ]]; then
 	success "run_command_once - runs once"
 else
 	failure "run_command_once - runs once"
