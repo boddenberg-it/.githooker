@@ -65,7 +65,7 @@ echo -e "######${b} starting .githooker test suites ${u}######\n"
 
 # switch_to_branch to not break local development
 # TODO: needs stashing for local development only
-current_branch="$(git branch --format='%(refname:short)' | head -n1)"
+current_branch="$(git rev-parse --abbrev-ref HEAD)"
 git branch -D githooker_testing_branch > /dev/null 2>&1
 git branch githooker_testing_branch > /dev/null
 git checkout githooker_testing_branch > /dev/null
