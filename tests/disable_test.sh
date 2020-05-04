@@ -1,10 +1,11 @@
 ##########################################
 ensure_clean_test_setup "disable one hook"
 enabled_hook pre-commit
+enabled_hook pre-rebase
 
 disable "pre-commit" > /dev/null
 
-if [ -f "$BASE/$GIT_HOOK_DIR/pre-commit" ]; then
+if [ -f "$BASE/$GIT_HOOK_DIR/pre-commit" ] || [ ! -f "$BASE/$GIT_HOOK_DIR/pre-rebase" ]; then
 	failure "disable - one hook"
 else
 	success "disable - one hook"
