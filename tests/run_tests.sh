@@ -51,16 +51,12 @@ source "$TEST_BASE/githooker.sh"
 # issue: a submodule does not have a .git/hooks dir. ".git" is a file in such case.
 if [[ ! -d "$BASE/.git/" ]]; then
 	echo "fired"
-	GIT_HOOK_DIR="$TEST_BASE/.git_hooks_for_testing_githooker_in_own_git_repo_as_submodule"
+	GIT_HOOK_DIR=".git_hooks_for_testing_githooker_in_own_git_repo_as_submodule"
 	hook_dir=".githooker/$hook_dir"
 fi
 
 # one may run tests before creating .githooks
 mkdir -p "$hook_dir" "$GIT_HOOK_DIR"
-
-echo "BASE: $BASE, TEST_BASE: $TEST_BASE"
-echo "GIT_HOOK_DIR: $GIT_HOOK_DIR, hook_dir: $hook_dir"
-#exit 0
 
 final_test_result=0
 
@@ -70,11 +66,14 @@ echo -e "######${b} starting .githooker test suites ${u}######\n"
 # switch_to_branch to not break local development
 # TODO: needs stashing for local development only
 current_branch="$(git branch --format='%(refname:short)' | head -n1)"
-git branch -D testing_branch > /dev/null 2>&1
-git branch testing_branch > /dev/null
-git checkout testing_branch > /dev/null
+git branch -D githooker_testing_branch > /dev/null 2>&1
+git branch githooker_testing_branch > /dev/null
+git checkout githooker_testing_branch > /dev/null
 
-source "$TEST_BASE/tests/generic_hooks_test.sh"
+# check whether we're called within a git submodule
+if [[ -d "$BASE/.git/" ]]; then
+	source "$TEST_BASE/tests/generic_hooks_test.sh"
+fi
 
 echo -e "\n${b}TESTSUITE .githooker/* commands$u"
 
@@ -95,6 +94,6 @@ rm "$BASE/foo.check" "$BASE/bar.check" "$BASE/$hook_dir/pre-commit" \
 ensure_clean_test_setup
 echo
 git checkout "$current_branch" > /dev/null
-git branch -D testing_branch > /dev/null 2>&1
+git branch -D githooker_testing_branch > /dev/null 2>&1
 echo
 exit $final_test_result

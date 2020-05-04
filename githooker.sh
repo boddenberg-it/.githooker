@@ -1,8 +1,10 @@
 #!/bin/bash
 
-# without slashes
-hook_dir=".githooks_for_testing" # TODO: rename to default ".githooks" and overwrite in run_tests!
- 
+hook_dir=".githooks"
+
+GIT_HOOK_DIR=".git/hooks"
+
+######### NOTHING TO CONFIGURE BEYONG THIS LINE ############
 BASE="$(git rev-parse --show-toplevel)"
 
 # necessary to run .githooker tests in submodule dir,
@@ -42,8 +44,8 @@ function actual_disable {
     if [[ $1 = *"."* ]]; then
         hook="$(basename $1 | cut -d "." -f1)"
     fi
-    echo "$BASE/$GIT_HOOK_DIR/$hook"
-    unlink "$BASE/$GIT_HOOK_DIR/$hook" #> /dev/null
+    
+    unlink "$BASE/$GIT_HOOK_DIR/$hook" > /dev/null
 
     if [ -n "$3" ]; then
         # orphaned hook links are deleted not disabled!
@@ -127,13 +129,12 @@ function interactive { # argumentless function
     echo # new line at the end for better readability
 }
 
-function list { # argumentless function
-
+function list {
     echo -e "\n${b}[INFO]${u} listing all hooks ${b}(${g}enabled${d}/${y}disabled${d}/${r}orphaned${d})${u}"
 
     for hook_absolute_path in "$BASE/$hook_dir/"*; do
-        
         hook="$(basename $hook_absolute_path)"
+
         hook_without_extension="$(echo "$hook" | cut -d '.' -f1)"
 
         if [ -f "$BASE/$GIT_HOOK_DIR/$hook_without_extension" ]; then
