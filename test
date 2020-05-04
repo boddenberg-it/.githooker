@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ "$1" = "--skip-prompt"]; then
+if [ "$1" = "--skip-prompt" ]; then
     .githooker/tests/run_tests.sh
     exit $?
 fi
