@@ -14,4 +14,4 @@ cd ..
 # run .githookertestsutes in super project
 git clone https://github.com/boddenberg-it/croni && cd croni
 git submodule add https://github.com/boddenberg-it/.githooker .githooker
-.githooker/test
+echo "yes" | .githooker/test
