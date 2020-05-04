@@ -35,26 +35,6 @@ function enabled_hook {
 	echo "$1" > "$BASE/$hook_dir/$1.ext"
 	ln -s "$BASE/$hook_dir/$1.ext" "$BASE/.git/hooks/$1"
 }
-function create_hook {
-	# $1:
-	#	- hook e.g. 'pre-commit', 'post-merge'
-	# $2: 
-	#	- 0 symbolic link in .git/hooks/ (orphaned)
-	#	- 1 creates hook in $hook_dir/ (disabled)
-	#	- * creates both of the above (enabled)
-	
-	hook="$BASE/$hook_dir/$1.ext"
-	link="$BASE/.git/hooks/$1"
-	
-	echo "$1" > "$hook"
-	ln -s "$hook" "$link"
-	
-	if [ "$2" = "0" ]; then
-		rm "$hook"
-	elif [ "$2" = "1" ]; then
-		rm "$link"
-	fi
-}
 
 # check whether tests are invoked in .githooker and not in repo which is using it as a subomdule!
 if [ "$(basename "$BASE")" != "$hook_dir" ]; then
