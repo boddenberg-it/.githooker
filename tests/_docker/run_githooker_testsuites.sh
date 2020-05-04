@@ -6,6 +6,12 @@ git config --global http.sslVerify false ;\
 git config --global user.email "githooker@boddenberg.it" ;\
 git config --global user.name "githooker" ;\
 
+# run .githooker testsuites dev setup
 git clone https://github.com/boddenberg-it/.githooker.git 
-
 cd .githooker && ./tests/run_tests.sh
+cd ..
+
+# run .githookertestsutes in super project
+git clone https://github.com/boddenberg-it/croni && cd croni
+git submodule add https://github.com/boddenberg-it/.githooker .githooker
+.githooker/test
