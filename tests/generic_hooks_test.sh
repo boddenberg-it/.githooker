@@ -1,9 +1,11 @@
 echo -e "\n${b}TESTSUITE general hook tests$u"
 
 # create githook script with failing content
+echo $"$BASE/$hook_dir/pre-commit.sh"
+
 cat << EOF > "$BASE/$hook_dir/pre-commit.sh"
 #!/bin/bash -e
-source "./generic_hooks.sh" "pre-commit"
+source "$TEST_BASE/generic_hooks.sh" "pre-commit"
 
 run_command_for_each_file ".test" "mkdir"
 
@@ -26,7 +28,7 @@ fi
 # create githook script with actual content
 cat << EOF > "$BASE/$hook_dir/pre-commit.sh"
 #!/bin/bash
-source "./generic_hooks.sh" "pre-commit"
+source "$TEST_BASE/generic_hooks.sh" "pre-commit"
 
 run_command_for_each_file ".check" "touch"
 
@@ -34,7 +36,7 @@ run_command_for_each_file ".foo,.one" "touch"
 
 run_command_once ".check" "touch test_only_once_single_regex"
 
-run_command_once ".check" "$BASE/tests/_counter_for_run_once_test.sh"
+run_command_once ".check" "$TEST_BASE/tests/_counter_for_run_once_test.sh"
 
 run_command_once ".nope,.check" "touch test_only_once_multiple_regex"
 
@@ -53,7 +55,7 @@ if [ $? -gt 0 ]; then
 	echo -e "${r}[WARNING]$u No expect installation found skipping hook-notification test..."
 else
 
-	expect "$BASE/tests/notification_test.exp" "y" > /dev/null
+	expect "$TEST_BASE/tests/notification_test.exp" "y" > /dev/null
 
 	if [ $? = 0 ]; then
 		success "has hook notification been printed?"

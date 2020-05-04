@@ -1,8 +1,10 @@
 #!/bin/bash
 
-# without slashes
-hook_dir=".githooks_for_testing"
+hook_dir=".githooks"
 
+GIT_HOOK_DIR=".git/hooks"
+
+######### NOTHING TO CONFIGURE BEYONG THIS LINE ############
 BASE="$(git rev-parse --show-toplevel)"
 
 # colors for output messages
@@ -27,8 +29,8 @@ function actual_enable {
         # so we add it here
         hook="$hook_dir/$hook"
     fi
-    ln -s -f ../../"$hook" ".git/hooks/$2"
-    # Note: "../.." is necessary because git hooks spawn in .git/hooks
+    ln -s -f ../../"$hook" "$GIT_HOOK_DIR/$2"
+    # Note: "../.." is necessary because git hooks spawn in $GIT_HOOK_DIR
     echo -e "\t$b$1$u hook ${g}enabled${d}"
 }
 
@@ -38,8 +40,7 @@ function actual_disable {
     if [[ $1 = *"."* ]]; then
         hook="$(basename $1 | cut -d "." -f1)"
     fi
-    echo "$BASE/.git/hooks/$hook"
-    unlink "$BASE/.git/hooks/$hook" #> /dev/null
+    unlink "$BASE/$GIT_HOOK_DIR/$hook" #> /dev/null
 
     if [ -n "$3" ]; then
         # orphaned hook links are deleted not disabled!
@@ -66,7 +67,7 @@ function generic_toggle {
 
 ## actual commands/task which can be invoked
 function disable {
-    generic_toggle "actual_disable" "$BASE/.git/hooks/*" $@
+    generic_toggle "actual_disable" "$BASE/$GIT_HOOK_DIR/*" $@
 }
 
 function enable {
@@ -87,7 +88,7 @@ function interactive { # argumentless function
     for hook in "$BASE/$hook_dir/"*; do
         hook_without_extension="$(cut -d '.' -f1 "$hook")"
 
-        if [ -f "$BASE/.git/hooks/$hook_without_extension" ]; then
+        if [ -f "$BASE/$GIT_HOOK_DIR/$hook_without_extension" ]; then
             echo -e "\n\t${g}${b}$hook_without_extension${u} hook is enabled${d}. Do you want to ${b}disable${u} it? (y/N)"
 
             if [ "$(awnser)" = "yes" ]; then
@@ -102,8 +103,8 @@ function interactive { # argumentless function
         fi
     done
 
-    # searching for orphaned hooks in ./.git/hooks
-    for hook in "$BASE"/.git/hooks/*; do
+    # searching for orphaned hooks in ./$GIT_HOOK_DIR
+    for hook in "$BASE"/$GIT_HOOK_DIR/*; do
 
         # early return if file is sample file
         if [[ "$hook" == *".sample" ]]; then
@@ -123,16 +124,15 @@ function interactive { # argumentless function
     echo # new line at the end for better readability
 }
 
-function list { # argumentless function
-
+function list {
     echo -e "\n${b}[INFO]${u} listing all hooks ${b}(${g}enabled${d}/${y}disabled${d}/${r}orphaned${d})${u}"
 
     for hook_absolute_path in "$BASE/$hook_dir/"*; do
-        
         hook="$(basename $hook_absolute_path)"
+
         hook_without_extension="$(echo "$hook" | cut -d '.' -f1)"
 
-        if [ -f "$BASE/.git/hooks/$hook_without_extension" ]; then
+        if [ -f "$BASE/$GIT_HOOK_DIR/$hook_without_extension" ]; then
             cc="$g"
         else
             cc="$y"
@@ -141,7 +141,7 @@ function list { # argumentless function
     done
 
     # searching for orphaned-hooks/broken-links
-    for file in "$BASE"/.git/hooks/*; do
+    for file in "$BASE"/$GIT_HOOK_DIR/*; do
 
         if [[ $file == *".sample" ]]; then
             continue
