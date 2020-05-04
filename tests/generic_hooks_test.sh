@@ -74,6 +74,7 @@ echo "foobar one" > foobar.one
 echo "check one" > foo.check
 touch bar.check
 git add foo.check bar.check foobar.one
+rm foo.check bar.check foobar.one
 git commit -m "commit for unit tests" > /dev/null
 
 # non expect-related tests
