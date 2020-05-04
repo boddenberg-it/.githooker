@@ -4,13 +4,13 @@ disabled_hook pre-push
 
 enable ".githook/pre-commit.sh" "pre-push.sh" > /dev/null
 
-if [ -L "$BASE/.git/hooks/pre-commit" ]; then
+if [ -L "$BASE/$GIT_HOOK_DIR/pre-commit" ]; then
 	success "EN/DISable - passing path to hook script"
 else
 	failure "EN/DISable - passing path to hook script"
 fi
 
-if [  -L "$BASE/.git/hooks/pre-push" ]; then
+if [  -L "$BASE/$GIT_HOOK_DIR/pre-push" ]; then
 	success "EN/DISable - passing hook with extension"
 else
 	failure  "EN/DISable - passing hook with extension"

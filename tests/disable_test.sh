@@ -4,7 +4,7 @@ enabled_hook pre-commit
 
 disable "pre-commit" > /dev/null
 
-if [ -f "$BASE/.git/hooks/pre-commit" ]; then
+if [ -f "$BASE/$GIT_HOOK_DIR/pre-commit" ]; then
 	failure "disable - one hook"
 else
 	success "disable - one hook"
@@ -15,7 +15,7 @@ orphaned_hook pre-commit
 
 disable "pre-commit" > /dev/null
 
-if [ ! -f "$BASE/.git/hooks/pre-push" ]; then
+if [ ! -f "$BASE/$GIT_HOOK_DIR/pre-push" ]; then
 	success "disable - orphaned hook"
 else
 	failure "disable - orhaned hook"
@@ -28,7 +28,7 @@ enabled_hook pre-rebase
 
 disable "pre-commit" "pre-push" "pre-rebase" > /dev/null 2>&1
 
-if [ -f "$BASE/.git/hooks/pre-commit" ] || [ -f "$BASE/.git/hooks/pre-push" ] || [ -f "$BASE/.git/hooks/pre-rebase" ]; then
+if [ -f "$BASE/$GIT_HOOK_DIR/pre-commit" ] || [ -f "$BASE/$GIT_HOOK_DIR/pre-push" ] || [ -f "$BASE/$GIT_HOOK_DIR/pre-rebase" ]; then
 	failure "disable - three hooks"
 else
 	success "disable - three hooks"
@@ -41,7 +41,7 @@ enabled_hook pre-rebase
 
 disable --all > /dev/null 2>&1
 
-if [ -f "$BASE/.git/hooks/pre-commit" ] || [ -f "$BASE/.git/hooks/pre-push" ] || [ -f "$BASE/.git/hooks/pre-rebase" ]; then
+if [ -f "$BASE/$GIT_HOOK_DIR/pre-commit" ] || [ -f "$BASE/$GIT_HOOK_DIR/pre-push" ] || [ -f "$BASE/$GIT_HOOK_DIR/pre-rebase" ]; then
 	failure "disable - all hooks (--all)"
 else
 	success "disable - all hooks (--all)"

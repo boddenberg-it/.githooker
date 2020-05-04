@@ -3,8 +3,9 @@
 set timeout 1
 
 set answer [lindex $argv 0];
+set script [lindex $argv 1];
 
-spawn ./githooker.sh interactive
+spawn $script/githooker.sh interactive
 
 expect -re "32mpre-push hook is enabled*.*disable*.*"
 send -- "$answer\r"

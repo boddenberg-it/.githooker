@@ -4,7 +4,7 @@ orphaned_hook pre-commit
 disabled_hook pre-push
 enabled_hook pre-rebase
 
-log="$BASE/tests/list.output"
+log="$TEST_BASE/tests/list.output"
 list > "$log"
 
 if grep -q "31mpre-commit" "$log"; then

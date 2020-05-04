@@ -1,3 +1,5 @@
 #!/bin/bash
 
-"$(git rev-parse --show-toplevel)"/.githooker/tests/run_tests.sh
+cd .githooker/
+mkdir -p .git/hooks/
+./tests/run_tests.sh
