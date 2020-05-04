@@ -109,7 +109,7 @@ function interactive { # argumentless function
     done
 
     # searching for orphaned hooks in ./$GIT_HOOK_DIR
-    for hook in "$BASE"/$GIT_HOOK_DIR/*; do
+    for hook in "$BASE/$GIT_HOOK_DIR/"*; do
 
         # early return if file is sample file
         if [[ "$hook" == *".sample" ]]; then
@@ -146,7 +146,7 @@ function list {
     done
 
     # searching for orphaned-hooks/broken-links
-    for file in "$BASE"/$GIT_HOOK_DIR/*; do
+    for file in "$BASE/$GIT_HOOK_DIR/"*; do
 
         if [[ $file == *".sample" ]]; then
             continue
