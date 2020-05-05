@@ -2,79 +2,69 @@
 
 ### tl;dr: 
 
-- common git-hook tasks as declarative configuration inside your repo
-- simple & individual handling of git-hooks across team
-
+- simple setup, maintenance and handling of git-hooks across teams and projects
+- common git-hook tasks as declarative configuration inside your git repository (optional)
 
 ### Why?
 
-**.githooks** shall avoid duplicating code across multiple repositories used for _git-hook-ish_ tasks like evlauating list of staged files in a commit and fire actions accordingly. Setting up a [git-hook](https://git-scm.com/docs/githooks) is turned into a more declarative configuration. It also recudes maintenance of git-hooks across a team working on repository by tracking git-hooks in repo. Moreover, the `.githooks/helper.sh` provides simple management of project's git-hooks in an interactive CLI-manner.
+**.githooker** shall avoid duplicating code across multiple repositories used for _git-hook-ish_ tasks like evlauating list of staged files in a commit and fire actions accordingly. Setting up a [git-hooks](https://git-scm.com/docs/githooks) is turned into a declarative configuration when sourcing `.githooker/generic_hooks.sh`. If not one create an arbitrary executable/script in `.githooks` named after the hook is shall triggered upon - that's it, .githooker takes care of the rest! 
+It also reduces general maintenance of git-hooks across a team by tracking git-hooks in repo under `.githooks`. Moreover, .githooker provides commands to simply manage git-hooks in an interactive CLI manner without the need to rely on the optional declarative hook approach powered by `generic_hooks.sh`.
 
-Last but not least, **git** and **bash** are the only dependencies necessary for this [git-hook](https://git-scm.com/docs/githooks) helper in the hope to provide highly versatile use.
+The following output of `.githooker/help` shows all avalaible commands:
 
-_***Note***: This shall not stop anyone from using the general idea with python, groovy or the like instead of bash_.
+![example output of testsuites](https://boddenberg.it/github/githooker/help_log.png)
+
+Last but not least, **git** and **bash** are the only dependencies necessary for this "[git-hook](https://git-scm.com/docs/githooks) helper" in the hope to provide highly versatile use.
+
+_***Note***: This shall not stop anyone from using the general idea of `generic_hooks.sh` with python, ruby, groovy or the like instead of bash within .githooker_.
 
 ### How odes it work?
 
-**.githooks** itself is added as a [git submodule](https://git-scm.com/docs/git-submodule) to desired repsoitory. Then a `githooks/` directory is manually created, which holds arbritrary [git-hook](https://git-scm.com/docs/githooks) scripts and/or **git-hooks declarations**. Such declarations need to source `.githooks/generic_hooks.sh` to use the _declarative git-hooks_ approach. The following image shall visually explain the just stated:
-
-![alt text](https://boddenberg.it/misc/github/boddenberg-it/githooks/visualization.png "visualization of how .githooks works")
-
-Moreover, a `.githooks/helper.sh` script is provided to manage all git-hooks (blue line). Mentioned script has to be run initially to setup hooks locally and every time a new [git-hook](https://git-scm.com/docs/githooks) is introduced or removed. This behvaiour shall align with the general [git-hook opt-in mindset](https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks).
-
-_**Note**: `.githooks` takes care of any git-hook script in `githooks/` regardless whether its bash or even        sourcing `.githooks/generic_hooks.sh`._
-
+**.githooker** itself is added as a [git submodule](https://git-scm.com/docs/git-submodule) to desired repsoitory. Then a `.githooks/` directory is manually created, which holds arbitrary [git-hook](https://git-scm.com/docs/githooks) scripts and/or **git-hooks declarations**. Such declarations need to source `.githooker/generic_hooks.sh` to use the _declarative git-hooks_ approach but are optional - no need to use them.
 
 
 ### How to setup?
 
-### 1st) initial setup 
+#### 1st) initial setup 
 
 ```bash
 git submodule add https://github.com/boddenberg-it/.githooker .githooker
-mkdir .githooks
-touch .githooks/pre-commit.sh
 ```
 
-Open `.githooks/pre-commit.sh` in your favourite editor/IDE and put following content:
+Create an actual pre-commit hook script in `.githooks/pre-commit.sh` with content you want to run, e.g.:
 
 ```bash
 #!/bin/bash
-source $TEST_BASE/generic_hooks.sh
+source .githooker/generic_hooks.sh
 
-run_command_once ".js,.ts" "eslint"
+run_command_once ".js,.ts" "eslint" # runs passed command once if passed expression matches
 
-run_command_once "build.sh" "./build.sh"
+run_command_once "build.sh" "./build.sh" # can also be used to watch a specific file
 
-run_command_for_each_file ".xml," "xmllint"
+run_command_for_each_file ".xml," "xmllint" # loops over all files with extension
 
 ```
 
-After changing example to your project needs simply commit changes and push them - done!
+After creating pre-commit simply commit changes and push them - done!
 
-
-### 2nd) local setup
+#### 2nd) local setup
 
 After pulling latest changes initialize the [git submodule](https://git-scm.com/docs/git-submodule) via:
 
 ```bash
 git submodule init
-git submodule update
 ```
 
 Alternatively, cloning submodules directly when initially cloning super project works via:
 
 ```bash
-git clone --recurse-submodules $YOUR_PROJECT
+git clone --recurse-submodules "$PROJECT_URL"
 ```
 
-Run `./githooks/helper.sh interactive` to configure hooks.
+Run `.githooker/interactive` to configure all hooks sequentially in interactive mode or explicitely enable pre-commit hook by executing `.githooker/enable pre-commit`.
 
-For more information about all commands run `./.githooks/helper.sh help`. 
+_Note: One can also pass the full path to hook script or filename with extension in case you want to use the OS auto-completion feature._
 
-#### usage screenshots:
-
-tbc...
 
 # Test setup
 
@@ -89,7 +79,7 @@ Testsuites can be seen in following example output:
 
 ![example output of testsuites](https://boddenberg.it/github/githooker/testsuites_log.png)
 
-The run_tests.sh, which is invoked in both of the above ways provides genereal functions for setup/teardown tasks and invokes all `*_test.sh` scripts by sourcing them. Some of these scripts may use other helper or expect scripts, which all start with `_*`. Both expect scripts are only necessary to evaluate output generated by .githooker. But they are only invoked when expect is available to ensure functionality tests run regardless of expect.
+The run_tests.sh, which is invoked in both of the above ways provides genereal functions for setup/teardown tasks and invokes all `*_test.sh` scripts by sourcing them. Some of these scripts may use additional helper or expect scripts, which all start with `_*`. Both expect scripts are only necessary to evaluate output generated by .githooker. But they are only invoked when expect is available to ensure functionality tests run regardless of expect.
 
 ```bash
 .githooker/
@@ -121,7 +111,7 @@ The `.travis.yml` file declares all distros as `env: -distro=*` configuration. T
     │   ├── Dockerfile.debian
     │   ├── Dockerfile.ubuntu
     │   └── run_githooker_testsuites.sh
-    └── test_dockerfiles.sh # tests docker commands used in travis CI pipeline locally - sequentially though.
+    └── test_dockerfiles.sh # tests docker commands used in travis CI locally - sequentially though.
 ```
 
 The pipeline runs after a new change has been introduced. Furhtermore, it runs every 24 hours if no change occured to give feedback about OS compatibility. Simply click the travis badge to see test runs for each OS.
