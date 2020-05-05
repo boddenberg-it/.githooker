@@ -9,7 +9,7 @@
 
 **.githooker** shall avoid duplicating code across multiple repositories used for _git-hook-ish_ tasks like evaluating list of staged files and fire actions accordingly in a pre-commit hook. The setup of such a [git-hook](https://git-scm.com/docs/githooks) is basically turned into a declarative configuration with .githooker.
 
-Ofcourse an arbitrary executable/script is also handled by .githooker. Just create a it under`.githooks` named after the hook is shall be triggered upon and run `.githooker/enable pre-commit`- that's it!
+Ofcourse an arbitrary executable/script is also handled by .githooker. Just create a it under `.githooks` named after the hook is shall be triggered upon and run `.githooker/enable pre-commit` - that's it!
 
 Moreover, .githooker provides commands to simply manage git-hooks in an interactive CLI manner. The following output of `.githooker/help` command shows/explains all avalaible commands:
 
@@ -45,14 +45,14 @@ An example call to enable the pre-commit hook looks like:
 
 ```
 
-Last but not least, **git** and **bash** are the only dependencies necessary for this "[git-hook](https://git-scm.com/docs/githooks) helper" in the hope to provide highly versatile use.
+Last but not least, **git** and **bash** are the only dependencies necessary for this "[git-hook](https://git-scm.com/docs/githooks) helper" in the hope to provide highly versatile use across virtually all project languages.
 
 _***Note***: This shall not stop anyone from using the general idea of `generic_hooks.sh` with python, ruby, groovy or the like instead of bash within .githooker_.
 
 
 ### How odes it work?
 
-**.githooker** itself is added as a [git submodule](https://git-scm.com/docs/git-submodule) to desired repsoitory. Then a `.githooks/` directory is manually created, which holds arbitrary [git-hooks](https://git-scm.com/docs/githooks) and/or mentioned _git-hook declarations_. Furthermore, .githooker handles symbolic linking from hooks in `.githooks/pre-commit.sh` to `.git/hooks/pre-commit` via above mentiomned `.githooker/*` commands.
+**.githooker** itself is added as a [git submodule](https://git-scm.com/docs/git-submodule) to desired repsoitory. Then a `.githooks/` directory is manually created, which holds arbitrary [git-hooks](https://git-scm.com/docs/githooks) and/or mentioned _git-hook declarations_. Furthermore, .githooker handles symbolic linking from hooks in `.git/hooks/pre-commit` to `.githooks/pre-commit.sh` via above mentioned `.githooker/*` commands.
 
 ### How to setup?
 
@@ -76,7 +76,7 @@ run_command_for_each_file ".xml," "xmllint" # loops over all files with extensio
 
 ```
 
-After creating pre-commit simply commit changes and push them - done!
+After creating hook simply commit changes and push them - done!
 
 #### 2nd) local setup
 
@@ -92,7 +92,7 @@ Alternatively, cloning submodules directly when initially cloning super project 
 git clone --recurse-submodules "$PROJECT_URL"
 ```
 
-Then run `.githooker/interactive` to configure all hooks in interactive mode as seen in following screenshot:
+Then run `.githooker/interactive` to configure all available hooks in interactive mode as seen in following screenshot:
 
 ![example output of testsuites](https://boddenberg.it/github_pics/githooker/interactive_log.png)
 
