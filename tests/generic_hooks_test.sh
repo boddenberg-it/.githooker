@@ -55,7 +55,7 @@ if [ $? -gt 0 ]; then
 	echo -e "${r}[WARNING]$u No expect installation found skipping hook-notification test..."
 else
 
-	expect "$TEST_BASE/tests/notification_test.exp" "y" > /dev/null
+	expect "$TEST_BASE/tests/_notification_test.exp" "y" > /dev/null
 
 	if [ $? = 0 ]; then
 		success "has hook notification been printed?"

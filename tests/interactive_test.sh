@@ -9,7 +9,7 @@ else
 	disabled_hook pre-rebase
 
     start="$(date +%s)"
-	expect "$TEST_BASE/tests/interactive.exp" "n" "$TEST_BASE" > /dev/null
+	expect "$TEST_BASE/tests/_interactive.exp" "n" "$TEST_BASE" > /dev/null
 	end="$(date +%s)"
 
     # evaluation (based on time out)
@@ -20,7 +20,7 @@ else
 	fi
 	
 	start="$(date +%s)"
-	expect "$TEST_BASE/tests/interactive.exp" "y" "$TEST_BASE" > /dev/null
+	expect "$TEST_BASE/tests/_interactive.exp" "y" "$TEST_BASE" > /dev/null
 	end="$(date +%s)"
 
 	# check for timeout

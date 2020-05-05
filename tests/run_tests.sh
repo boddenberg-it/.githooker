@@ -72,7 +72,7 @@ source "$TEST_BASE/tests/enable_test.sh"
 
 source "$TEST_BASE/tests/disable_test.sh"
 
-source "$TEST_BASE/tests/en_disable_test.sh"
+source "$TEST_BASE/tests/pass_hook_path_with_extension_test.sh"
 
 source "$TEST_BASE/tests/interactive_test.sh"
 
