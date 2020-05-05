@@ -29,12 +29,12 @@ function actual_disable {
     unlink "$BASE/$GIT_HOOK_DIR/$hook" > /dev/null
 
     # print log line based on whether it was an enabled or oprhaned hook
-    path_of_linked_script_by_hook="$(find "$BASE"/$hook_dir -name "$(basename $file).*")"
+    path_of_linked_script_by_hook="$(find "$BASE"/$hook_dir -name "$(basename $hook).*")"
     
     if [ -z "$path_of_linked_script_by_hook" ] || [ ! -f "$path_of_linked_script_by_hook" ]; then
-        echo -e "\t$b$1$u hook ${r}deleted${d}"
+        echo -e "\t$b$hook$u hook ${r}deleted${d}"
     else
-        echo -e "\t$b$1$u hook ${y}disabled${d}"
+        echo -e "\t$b$hook$u hook ${y}disabled${d}"
     fi
 }
 
@@ -45,13 +45,13 @@ function actual_enable {
     # if so, we get the hook_dir too
     if [[ $1 != *"."* ]]; then
         hook="$(find "$hook_dir" -name "$1.*")"
-    else
-        # so we add it here
-        hook="$hook_dir/$hook"
     fi
-    ln -s -f ../../"$hook" "$GIT_HOOK_DIR/$(basename $1 | cut -d '.' -f 1)"
+
+    hook_without_extensions="$(basename $1 | cut -d "." -f1)"
+
+    ln -s -f ../../"$hook" "$GIT_HOOK_DIR/$hook_without_extensions"
     # Note: "../.." is necessary because git hooks spawn in $GIT_HOOK_DIR
-    echo -e "\t$b$1$u hook ${g}enabled${d}"
+    echo -e "\t$b$hook_without_extensions$u hook ${g}enabled${d}"
 }
 
 # used by interactive
@@ -70,7 +70,6 @@ function generic_toggle {
     else
         command="$1"; shift; shift;
         for hook in $@; do
-            hook="$(basename $hook)"
             $command "$hook" 2> /dev/null
         done
     fi
