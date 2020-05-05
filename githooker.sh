@@ -55,7 +55,7 @@ function actual_enable {
 }
 
 # used by interactive
-function awnser {
+function answer {
     read -r user_answer
     if [ "$user_answer" = "y" ] || [ "$user_answer" = "yes" ]; then
         echo "yes"
@@ -94,13 +94,13 @@ function interactive {
         if [ -f "$BASE/$GIT_HOOK_DIR/$hook_without_extension" ]; then
             echo -e "\n\t${g}${b}$hook_without_extension${u} hook is enabled${d}. Do you want to ${b}disable${u} it? (y/N)"
 
-            if [ "$(awnser)" = "yes" ]; then
+            if [ "$(answer)" = "yes" ]; then
                 actual_disable "$hook"
             fi
         else
             echo -e "\n\t${y}${b}$hook_without_extension${u} hook is disabled${d}. Do you want to ${b}enable${u} it? (y/N)"
 
-            if [ "$(awnser)" = "yes" ]; then
+            if [ "$(answer)" = "yes" ]; then
                 actual_enable "$hook"
             fi
         fi
@@ -119,7 +119,7 @@ function interactive {
         if [ -z $hook_script ] || [ ! -f $hook_script ]; then
             echo -e "\n\t${r}$(basename $hook) hook is orphaned.$u Do you want to ${b}delete$u it? (y/N)${d}"
 
-            if [ "$(awnser)" = "yes" ]; then
+            if [ "$(answer)" = "yes" ]; then
                 actual_disable "$hook"
             fi
         fi
