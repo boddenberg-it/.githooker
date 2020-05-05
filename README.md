@@ -31,21 +31,21 @@ _**Note**: `.githooks` takes care of any git-hook script in `githooks/` regardle
 ### 1st) initial setup 
 
 ```bash
-git submodule add https://github.com/boddenberg-it/.githooks
-mkdir githooks
-touch githooks/pre-commit.sh
+git submodule add https://github.com/boddenberg-it/.githooker .githooker
+mkdir .githooks
+touch .githooks/pre-commit.sh
 ```
 
-Open `githooks/pre-commit.sh` in your favourite editor/IDE and put following content:
+Open `.githooks/pre-commit.sh` in your favourite editor/IDE and put following content:
 
 ```bash
 #!/bin/bash
-source .githooks/generic_hooks.sh
+source $TEST_BASE/generic_hooks.sh
 
 run_command_once "*.java,*.kt" "echo \"list of expressions matches staged files\""
 
-run_command_for_each_file "*.sh" "echo \"found staged script: \$changed_file\""
-# Note: \$changed_file needs to be escaped to substitute it while actual processing.
+run_command_for_each_file "*.sh" "echo \"found staged file: \""
+
 ```
 
 After changing example to your project needs simply commit changes and push them - done!
@@ -74,8 +74,58 @@ For more information about all commands run `./.githooks/helper.sh help`.
 
 tbc...
 
-#### Feebdack [githooks@boddenberg.it](mailto:githooks@boddenberg.it?subject=[.githooks])
+# TEST SETUP
 
-# test setup of .githooks
+First of all .githooker testsuites can be invoked in two different ways/environments.
 
-tbc ...
+- `./tests/run_tests.sh`: when developing .githooker, i.e. having it cloned as repo.
+- `.githooker/test`: when using .githooker as submodule
+
+_*Note*: Please be aware that `.githooker/test` shall be only invoked in a clean git state, i.e. having no staged changes - loss of cahnges *may* occure otherwiswe._
+
+Testsuites can be seen in following example output:
+
+GRAFIK von output
+
+_*Note*: When `exepct` is not installed interactive and the githooker notification tests won't run. Still functionality is fully verified though._ 
+
+TODO: 1-2 sentence about how test setup works
+```bash
+.githooker/
+└── tests
+    ├── _counter_for_run_once_test.sh
+    ├── _interactive.exp
+    ├── _notification_test.exp
+    ├── disable_test.sh
+    ├── enable_test.sh
+    ├── generic_hooks_tests.sh
+    ├── interactive_test.sh
+    ├── list_test.sh
+    ├── pass_hook_path_with_extension_test.sh
+    └── run_tests.sh
+```
+
+#### travis CI
+
+The `.travis.yml` file declares all distros as `env: -distro=*` configuration. Then all distro specific `Dockerfile.*` are build in parallel using same test script `run_githooker_testsuites.sh`, which runs testsuites in both scenarios. First the develop variant having cloned repo and then .githooker added as submodule.
+
+related files:
+```bash
+.githooker/
+├── .travis.yml
+└── tests
+    ├── _docker
+    │   ├── Dockerfile.alpine
+    │   ├── Dockerfile.archlinux
+    │   ├── Dockerfile.centos
+    │   ├── Dockerfile.debian
+    │   ├── Dockerfile.ubuntu
+    │   └── run_githooker_testsuites.sh
+    └── test_dockerfiles.sh # tests docker commands used in travis CI pipeline locally - sequentially though.
+```
+
+The pipeline runs after a new change has been introduced. Furhtermore, it runs every 24 hours if no change occured to give feedback about OS compatibility. Simply click the travis badge to see test runs for each OS.
+
+#### Feebdack
+
+Please send questions, feedback, bugs or suggestions to [githooks@boddenberg.it](mailto:githooks@boddenberg.it?subject=[.githooks]).
