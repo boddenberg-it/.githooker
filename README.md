@@ -12,7 +12,37 @@ It also reduces general maintenance of git-hooks across a team by tracking git-h
 
 The following output of `.githooker/help` shows all avalaible commands:
 
-![example output of testsuites](https://boddenberg.it/github/githooker/help_log.png)
+```bash
+                       _ __  __                __
+                ____ _(_) /_/ /_  ____  ____  / /_____  _____
+               / __  / / __/ __ \/ __ \/ __ \/ //_/ _ \/ ___/
+             _/ /_/ / / /_/ / / / /_/ / /_/ / ,< /  __/ /
+            (_)__, /_/\__/_/ /_/\____/\____/_/|_|\___/_/
+             /____/
+
+Following .githooker/* commands are provided:
+
+    - list          lists all hooks and their states enabled/disabled/orphaned.
+
+    - interactive   loops through all hooks and asked whether to toggle its state.
+
+    - enable        enables passed hook(s).
+
+    - disable       disables passed hook(s).
+
+      Note: "--all" can be passed as arg for enable and disable calls.
+
+
+    - test          runs .githooker testsuites (only invoke in clean git state).
+
+    - help:         prints what you're seeing.
+
+
+An example call to enable the pre-commit hook looks like:
+
+    .githooker/enable pre-commit
+
+```
 
 Last but not least, **git** and **bash** are the only dependencies necessary for this "[git-hook](https://git-scm.com/docs/githooks) helper" in the hope to provide highly versatile use.
 

@@ -1,0 +1,36 @@
+#!/bin/bash
+
+cat << EOF
+                       _ __  __                __            
+                ____ _(_) /_/ /_  ____  ____  / /_____  _____
+               / __  / / __/ __ \/ __ \/ __ \/ //_/ _ \/ ___/
+             _/ /_/ / / /_/ / / / /_/ / /_/ / ,< /  __/ /    
+            (_)__, /_/\__/_/ /_/\____/\____/_/|_|\___/_/     
+             /____/                                         
+
+Following .githooker/* commands are provided:
+
+    - list          lists all hooks and their states enabled/disabled/orphaned.
+
+    - interactive   loops through all hooks and asked whether to toggle its state.
+
+    - enable        enables passed hook(s).
+
+    - disable       disables passed hook(s).
+
+      Note: "--all" can be passed as arg for enable and disable calls.
+  
+
+    - test          runs .githooker testsuites (only invoke in clean git state).           
+
+    - help:         prints what you're seeing.
+
+
+An example call to enable the pre-commit hook looks like:
+
+    .githooker/enable pre-commit
+    
+
+More information under: https://github.com/boddenberg-it/.githooker
+
+EOF
