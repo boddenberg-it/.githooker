@@ -3,56 +3,54 @@
 ### tl;dr: 
 
 - simple setup, maintenance and handling of git-hooks across teams and projects
-- common git-hook tasks as declarative configuration inside your git repository (optional)
+- common git-hook tasks as declarative configuration inside your git repository _(optional)_
 
 ### Why?
 
-**.githooker** shall avoid duplicating code across multiple repositories used for _git-hook-ish_ tasks like evaluating the list of staged files and fire actions accordingly in a pre-commit hook. The setup of such a [git-hook](https://git-scm.com/docs/githooks) is basically turned into a declarative configuration with .githooker.
-
-Of course, an arbitrary executable/script is also handled by .githooker. Just create it under `.githooks` named after the hook it shall be triggered upon and run `.githooker/enable pre-commit` - that's it!
+**.githooker** shall avoid duplicating code across multiple repositories used for _git-hook-ish_ tasks like evaluating the list of staged files and fire actions accordingly in a pre-commit hook. The setup of such a [git-hook](https://git-scm.com/docs/githooks) is basically turned into a **_declarative configuration_** with .githooker. Of course, any arbitrary executable/script is also handled by .githooker.
 
 Moreover, .githooker provides commands to simply manage git-hooks in an interactive CLI manner. The following output of `.githooker/help` shows/explains all available commands:
 
-```
-                       _ __  __                __
-                ____ _(_) /_/ /_  ____  ____  / /_____  _____
-               / __  / / __/ __ \/ __ \/ __ \/ //_/ _ \/ ___/
-             _/ /_/ / / /_/ / / / /_/ / /_/ / ,< /  __/ /
-            (_)__, /_/\__/_/ /_/\____/\____/_/|_|\___/_/
-             /____/
-
-Following .githooker/* commands are provided:
-
-    - list          lists all hooks and their states enabled/disabled/orphaned.
-
-    - interactive   loops through all hooks and asked whether to toggle its state.
-
-    - enable        enables passed hook(s).
-
-    - disable       disables passed hook(s).
-
-      Note: "--all" can be passed as arg for enable and disable calls.
-
-
-    - test          runs .githooker testsuites (only invoke in clean git state).
-
-    - help:         prints what you're seeing.
-
-
-An example call to enable the pre-commit hook looks like:
-
-    .githooker/enable pre-commit
-
-```
+![example output of test suites](https://boddenberg.it/github_pics/githooker/help_log.png)
 
 Last but not least, **git** and **bash** are the only dependencies necessary for this "[git-hook](https://git-scm.com/docs/githooks) helper" in the hope to provide highly versatile use across virtually all project languages.
 
 _***Note***: This shall not stop anyone from using the general idea of `generic_hooks.sh` with python, ruby, groovy or the like instead of bash within .githooker_.
 
-
 ### How odes it work?
 
-**.githooker** is added as a [git submodule](https://git-scm.com/docs/git-submodule) to your repository. Then a `.githooks/` directory is manually created, which holds arbitrary [git-hooks](https://git-scm.com/docs/githooks) and/or mentioned _git-hook declarations_. Furthermore, .githooker handles symbolic linking from hooks in `.git/hooks/pre-commit` to `.githooks/pre-commit.sh` via above mentioned `.githooker/*` commands.
+**.githooker** is added as a [git submodule](https://git-scm.com/docs/git-submodule) to your repository. Then a `.githooks/` directory is manually created, which holds arbitrary [git-hooks](https://git-scm.com/docs/githooks) and/or mentioned _git-hook declarations_. Furthermore, .githooker handles symbolic linking from hooks in `.git/hooks/pre-commit` to `.githooks/pre-commit.sh`.
+
+To use **_declarative configuration_** one needs to source `.githooker/generic_hooks.sh` in each hook script. Then following two commands are available:
+
+```bash
+run_command_once "$expression" "$command"
+
+run_command_for_each_file "$expression" "$command"
+```
+
+- $expression - which evaluates list of staged files (line-by-line)
+
+- $command - which will be executed when expression matches
+
+The `expression` can hold an extension, a filename or even path relative to repository. Moreover, one or multiple expressions can be configured. It's basically a `| grep -e`, only difference is that a comma ',' becomes an `or` to put some _syntactic sugar_ to the decalarations. Of courese, one can always pass any arbitrary valid expression.
+
+examples:
+```bash
+".xml"         # matches any *.xml file
+
+"foo.json"     # matches specific filename
+
+"./foo/bar.py" # matches specific file
+
+".c,.cpp"      # matches *.c or *.cpp files
+```
+
+The difference between run_command_{once,for_each_file} is that *_once runs only once if the expression matches. *_for_each_file on the other hand executes a command for each file and adds the file as an argument to the command, so the actual line in generic_hooks.sh looks like:
+
+```bash
+    $command $changed_file
+```
 
 ### How to setup?
 
@@ -68,12 +66,9 @@ Create an actual pre-commit hook script in `.githooks/pre-commit.sh` with the co
 #!/bin/bash
 source .githooker/generic_hooks.sh
 
-run_command_once ".js,.ts" "eslint" # runs passed command once if passed expression matches
+run_command_once ".py" "./ci/python_related_smoke_tests.sh"
 
-run_command_once "build.sh" "./build.sh" # can also be used to watch a specific file
-
-run_command_for_each_file ".xml," "xmllint" # loops over all files with extension
-
+run_command_for_each_file ".xml," "xmllint"
 ```
 
 After creating hook simply commit changes and push them - done!
