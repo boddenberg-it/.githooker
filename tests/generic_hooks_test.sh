@@ -17,7 +17,7 @@ enable pre-commit > /dev/null
 echo "foo" > foo.test
 echo "foo" > bar.test
 git add foo.test bar.test
-git commit -m "let the fail begin" > /dev/null
+git commit -m "let the fail begin" > /dev/null 2>&1
 
 # check if hook did block the commit
 if [[ "$(git log -n1 | tail -n1)" != *"let the fail begin"* ]]; then
