@@ -18,12 +18,12 @@ Following .githooker/* commands are provided:
 
     - disable       disables passed hook(s).
 
-      Note: "--all" can be passed as arg for enable and disable calls.
+        Note: "--all" can be passed as arg for enable and disable calls.
   
 
     - test          runs .githooker testsuites (only invoke in clean git state).           
 
-    - help:         prints what you're seeing.
+    - help          prints what you're seeing.
 
 
 An example call to enable the pre-commit hook looks like:
