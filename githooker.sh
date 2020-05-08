@@ -26,15 +26,24 @@ function actual_disable {
         hook="$(basename $1 | cut -d "." -f1)"
     fi
     
-    unlink "$BASE/$GIT_HOOK_DIR/$hook" > /dev/null
+    link="$BASE/$GIT_HOOK_DIR/$hook"
 
-    # print log line based on whether it was an enabled or oprhaned hook
-    path_of_linked_script_by_hook="$(find "$BASE"/$hook_dir -name "$(basename $hook)*")"
+    # check if it is a link and not a file
+    if [ -L "$link" ]; then
     
-    if [ -z "$path_of_linked_script_by_hook" ] || [ ! -f "$path_of_linked_script_by_hook" ]; then
-        echo -e "\t$b$hook$u hook ${r}deleted${d}"
+        unlink "$link" > /dev/null
+
+        # print log line based on whether it was an enabled or oprhaned hook
+        path_of_linked_script_by_hook="$(find "$BASE"/$hook_dir -name "$(basename $hook)*")"
+
+        if [ -z "$path_of_linked_script_by_hook" ] || [ ! -f "$path_of_linked_script_by_hook" ]; then
+            echo -e "\t$b$hook$u hook ${r}deleted${d}"
+        else
+            echo -e "\t$b$hook$u hook ${y}disabled${d}"
+        fi
+
     else
-        echo -e "\t$b$hook$u hook ${y}disabled${d}"
+        echo -e "\t${r}[ERROR]${d} found hook in $b$GIT_HOOK_DIR$u is not a link! Please manual debug:$b $link $u"
     fi
 }
 
