@@ -29,7 +29,7 @@ function actual_disable {
     unlink "$BASE/$GIT_HOOK_DIR/$hook" > /dev/null
 
     # print log line based on whether it was an enabled or oprhaned hook
-    path_of_linked_script_by_hook="$(find "$BASE"/$hook_dir -name "$(basename $hook).*")"
+    path_of_linked_script_by_hook="$(find "$BASE"/$hook_dir -name "$(basename $hook)*")"
     
     if [ -z "$path_of_linked_script_by_hook" ] || [ ! -f "$path_of_linked_script_by_hook" ]; then
         echo -e "\t$b$hook$u hook ${r}deleted${d}"
@@ -41,10 +41,9 @@ function actual_disable {
 function actual_enable {
     hook="$1"
 
-    # get hook extension if missing
-    # if so, we get the hook_dir too
+    # get hook extension if missing and available
     if [[ $1 != *"."* ]]; then
-        hook="$(find "$hook_dir" -name "$1.*")"
+        hook="$(find "$hook_dir" -name "$1*")"
     fi
 
     hook_without_extensions="$(basename $1 | cut -d "." -f1)"
@@ -114,7 +113,7 @@ function interactive {
             continue
         fi
 
-        hook_script="$(find "$BASE/$hook_dir" -name "$(basename $hook).*")"
+        hook_script="$(find "$BASE/$hook_dir" -name "$(basename $hook)*")"
 
         if [ -z $hook_script ] || [ ! -f $hook_script ]; then
             echo -e "\n\t${r}$(basename $hook) hook is orphaned.$u Do you want to ${b}delete$u it? (y/N)${d}"
@@ -151,7 +150,7 @@ function list {
             continue
         fi
 
-        path_of_linked_script_by_hook="$(find "$BASE"/$hook_dir -name "$(basename $file).*")"
+        path_of_linked_script_by_hook="$(find "$BASE"/$hook_dir -name "$(basename $file)*")"
 
         if [ -z "$path_of_linked_script_by_hook" ] || [ ! -f "$path_of_linked_script_by_hook" ]; then
             echo -e "\t${r}$(basename $file)${d}"
