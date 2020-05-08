@@ -1,4 +1,8 @@
+# tests dir or files may not have been cleaned up
 /.githooks_for_testing/
-
-# files which may aren't cleaned up by tests
 tests/list.output
+foo.check
+foobar.one
+test_only_once_single_regex
+test_only_once_multiple_regex
+run_once
