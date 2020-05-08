@@ -50,9 +50,6 @@ fi
 # sourcing script under test for direct invokations
 source "$TEST_BASE/githooker.sh"
 
-# one may run tests before creating .githooks
-mkdir -p "$hook_dir"
-
 echo -e "#############################################"
 echo -e "######${b} starting .githooker test suites ${u}######\n"
 

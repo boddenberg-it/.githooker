@@ -159,5 +159,8 @@ function list {
     done
 }
 
+# one may run .githooker command before creating .githooks
+mkdir -p "$hook_dir"
+
 command=$1; shift
 $command $@
