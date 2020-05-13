@@ -13,7 +13,7 @@ Moreover, .githooker provides commands to simply manage git-hooks in an interact
 
 ![example output of test suites](https://boddenberg.it/github_pics/githooker/help_log.png)
 
-Last but not least, **git** and **bash** are the only dependencies necessary for this "[git-hook helper](https://git-scm.com/docs/githooks)" in the hope to provide highly versatile use across virtually all project languages.
+Last but not least, **git** and **bash** are the only dependencies necessary for this "[git-hook helper](https://githooks.com/)" in the hope to provide highly versatile use across virtually all project languages.
 
 _***Note***: This shall not stop anyone from using the general idea of `generic_hooks.sh` with python, ruby, groovy or the like instead of bash within .githooker_.
 
