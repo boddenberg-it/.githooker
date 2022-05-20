@@ -4,7 +4,6 @@ services: docker
 
 env:
 - distro=alpine
-- distro=archlinux
 - distro=centos
 - distro=debian
 - distro=ubuntu
